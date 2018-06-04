@@ -1,19 +1,43 @@
 import click
 import multiprocessing
 import subprocess
+import asyncio
+from contextlib import suppress
+import time
+import shlex
+
 
 N_THREADS = multiprocessing.cpu_count()
 
 
 def trace_file_len(fname):
-    with open(fname) as f:
-        for i, l in enumerate(f):
-            pass
-    return i - 1
+    try:
+        with open(fname) as f:
+            for i, l in enumerate(f):
+                pass
+        return i - 1
+    except FileNotFoundError:
+        return 0
+
+
+def check_thresholds(tracefile, max_gen, **thresholds):
+    generations = trace_file_len(tracefile)
+    # print(generations)
+    return generations < max_gen
+
+
+async def check_thresholds_periodic(tracefile, callback, **thresholds):
+    while True:
+        if check_thresholds(tracefile, **thresholds):
+            await asyncio.sleep(5)
+            continue
+        else:
+            callback()
+            break
 
 
 def mpirun_cmd(threads, filename):
-    return 'mpirun -np %d pb_mpi -cat -gtr -dgam 4 -d %s chain_1' % (threads, filename)
+    return shlex.split('mpirun -np %d pb_mpi -cat -gtr -dgam 4 -d %s chain_1' % (threads, filename))
 
 
 @click.command()
@@ -28,14 +52,15 @@ def mpirun_cmd(threads, filename):
 @click.option('--max-maxdiff', type=float, default=0.1,
               help='Threshold maximum difference.')
 @click.argument('filename', type=click.Path(exists=True), required=True)
-def cli(**kwargs):
+def cli(threads, filename, **thresholds):
     """
     FILENAME: the path to the file to process.
     """
-    threads = kwargs.get('threads')
-    filename = kwargs.get('filename')
     cmd = mpirun_cmd(threads, filename)
     click.echo('Starting run: %s' % cmd)
-    # open it in new window and start running
-    pid = subprocess.Popen(args=['gnome-terminal', '--command=%s' % cmd]).pid
-    print(pid)
+    # open it and start running
+    process = subprocess.Popen(cmd)
+    print(process)
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(check_thresholds_periodic('chain_1.trace', process.terminate, **thresholds))
