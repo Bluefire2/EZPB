@@ -40,6 +40,19 @@ def trace_file_len(fname):
         return 0
 
 
+def data_from_tracecomp_file():
+    data = ''  # assume file will have more thant [LOGLIK_LINE] lines
+    with open(TRACECOMP_OUT_FILE) as f:
+        for i, line in enumerate(f):
+            if i == LOGLIK_LINE:
+                data = line
+
+    parsed_data = re.sub(r'\s+', ' ', data).split(' ')
+    loglik_effsize = int(parsed_data[1])
+    loglik_rel_diff = float(parsed_data[2])
+    return loglik_effsize, loglik_rel_diff
+
+
 def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, **thresholds):
     if trace_file_len('%s.trace' % chains[0]) < MIN_CYCLES:
         return True
@@ -56,16 +69,9 @@ def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, **th
         discard = min(g / 10, MAX_GEN_DISCARD)
         subprocess.call('./tracecomp -x %d %s' % (discard, ' '.join(chains)),
                         shell=True, stdout=devnull, stderr=devnull)  # suppress output
-        # the results get written to a file
-        data = ''  # assume file will have more thant [LOGLIK_LINE] lines
-        with open(TRACECOMP_OUT_FILE) as f:
-            for i, line in enumerate(f):
-                if i == LOGLIK_LINE:
-                    data = line
 
-        parsed_data = re.sub(r'\s+', ' ', data).split(' ')
-        loglik_effsize = int(parsed_data[1])
-        loglik_rel_diff = float(parsed_data[2])
+        # the results get written to a file
+        loglik_effsize, loglik_rel_diff = data_from_tracecomp_file()
         print('Log likelihood effective size: %d' % loglik_effsize)
         print('Log likelihood relative difference: %f' % loglik_rel_diff)
 
