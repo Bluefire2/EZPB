@@ -154,8 +154,8 @@ def cli(threads, alignment, chains, **thresholds):
     """
     ALIGNMENT: the path to the alignment file to process.
 
-    CHAINS: the names of the chains to run in parallel. The threads will be shared evenly among the chains. At least two
-    chains must be specified.
+    CHAINS: the number of the chains to run in parallel. Threads will be shared evenly among the chains. The number of
+    chains must be at least two, but cannot be greater than the number of threads allocated.
     """
     if chains < 2:
         print('Error: Must specify at least two chains.')
