@@ -149,25 +149,28 @@ def terminate_all_processes(processes):
 @click.option('--min-maxdiff', type=float, default=MIN_MAXDIFF,
               help='Threshold maximum difference.')
 @click.argument('alignment', type=click.Path(exists=True), required=True)
-@click.argument('chains', type=str, required=True, nargs=-1)
+@click.argument('chains', type=int, required=True)
 def cli(threads, alignment, chains, **thresholds):
     """
-    ALIGNMENT: the path to the alignmentfile to process.
+    ALIGNMENT: the path to the alignment file to process.
 
     CHAINS: the names of the chains to run in parallel. The threads will be shared evenly among the chains. At least two
     chains must be specified.
     """
-    if len(chains) < 2:
+    if chains < 2:
         print('Error: Must specify at least two chains.')
         sys.exit(1)
-    elif len(chains) > threads:
+    elif chains > threads:
         print('Error: The number of chains cannot be less than the number of threads allocated.')
         sys.exit(1)
     else:
         processes = []
-        threads_per_chain = threads / len(chains)
+        threads_per_chain = threads / chains
+        chain_names = [('chain_%d' % i) for i in range(chains)]  # generate some chain names
+        print('Chains: %s' % ', '.join(chain_names))
+
         try:
-            for chain_name in chains:
+            for chain_name in chain_names:
                 cmd = mpirun_cmd(threads_per_chain, alignment, chain_name)
                 click.echo('Starting run: %s' % ' '.join(cmd))
                 # open it and start running
@@ -178,7 +181,7 @@ def cli(threads, alignment, chains, **thresholds):
                 terminate_all_processes(processes)
 
             loop = asyncio.get_event_loop()
-            loop.run_until_complete(check_thresholds_periodic(list(chains), terminate_all_bound, **thresholds))
+            loop.run_until_complete(check_thresholds_periodic(chain_names, terminate_all_bound, **thresholds))
         except BaseException:  # so that it catches KeyboardInterrupts
             print('Exception raised, terminating all chains...')
             terminate_all_processes(processes)
