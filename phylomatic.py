@@ -156,11 +156,10 @@ def cli(threads, alignment, chains, **thresholds):
         try:
             for chain_name in chains:
                 cmd = mpirun_cmd(threads_per_chain, alignment, chain_name)
-                click.echo('Starting run: %s' % cmd)
+                click.echo('Starting run: %s' % ' '.join(cmd))
                 # open it and start running
                 process = subprocess.Popen(cmd)
                 processes.append(process)
-                print(process)
 
             def terminate_all_bound():
                 terminate_all_processes(processes)
