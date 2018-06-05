@@ -77,6 +77,10 @@ def data_from_bpcomp_file():
     return max_diff
 
 
+def discard_samples(chain_length):
+    return min(chain_length / 10, MAX_GEN_DISCARD)
+
+
 def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, min_maxdiff, **thresholds):
     if trace_file_len('%s.trace' % chains[0]) < MIN_CYCLES:
         return True
@@ -90,7 +94,7 @@ def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, m
             above_max_gen = above_max_gen and (generations > max_gen)
 
         # we can assume that all the chains have progressed about the same amount, so pick one of the generation values
-        discard = min(g / 10, MAX_GEN_DISCARD)
+        discard = discard_samples(g)
         subprocess.call('./tracecomp -x %d %s' % (discard, ' '.join(chains)),
                         shell=True, stdout=devnull, stderr=devnull)  # suppress output
 
