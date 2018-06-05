@@ -22,6 +22,8 @@ MIN_CYCLES = int(config['generations']['min_cycles'])
 TRACECOMP_OUT_FILE = config['output']['tracecomp']
 LOGLIK_LINE = int(config['output']['loglik_line'])
 
+BPCOMP_OUT_FILE = config['output']['bpcomp']
+MAX_DIFF_LINE = int(config['output']['max_diff_line'])
 
 N_THREADS = multiprocessing.cpu_count()
 
@@ -41,7 +43,7 @@ def trace_file_len(fname):
 
 
 def data_from_tracecomp_file():
-    data = ''  # assume file will have more thant [LOGLIK_LINE] lines
+    data = ''  # assume file will have more thant [MAX_DIFF_LINE] lines
     with open(TRACECOMP_OUT_FILE) as f:
         for i, line in enumerate(f):
             if i == LOGLIK_LINE:
@@ -53,7 +55,19 @@ def data_from_tracecomp_file():
     return loglik_effsize, loglik_rel_diff
 
 
-def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, **thresholds):
+def data_from_bpcomp_file():
+    data = ''  # assume file will have more thant [LOGLIK_LINE] lines
+    with open(BPCOMP_OUT_FILE) as f:
+        for i, line in enumerate(f):
+            if i == MAX_DIFF_LINE:
+                data = line
+
+    parsed_data = re.sub(r'\s+', ' ', data).split(' ')
+    max_diff = float(parsed_data[2])
+    return max_diff
+
+
+def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, min_maxdiff, **thresholds):
     if trace_file_len('%s.trace' % chains[0]) < MIN_CYCLES:
         return True
     else:
@@ -79,7 +93,17 @@ def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, **th
         loglik_effsize_broken = loglik_effsize > max_loglik_size
         loglik_rel_diff_broken = loglik_rel_diff < min_loglik_rel_diff
 
-        thresholds_broken = above_max_gen or (loglik_effsize_broken and loglik_rel_diff_broken)
+        subprocess.call('./bpcomp -x %d 5 %s' % (discard, ' '.join(chains)),
+                        shell=True, stdout=devnull, stderr=devnull)  # suppress output
+
+        # once again the results are written to a file
+        max_diff = data_from_bpcomp_file()
+        print('Max diff: %f' % max_diff)
+
+        # have the thresholds been broken?
+        max_diff_broken = max_diff < min_maxdiff
+
+        thresholds_broken = above_max_gen or (loglik_effsize_broken and loglik_rel_diff_broken and max_diff_broken)
         return not thresholds_broken
 
 
