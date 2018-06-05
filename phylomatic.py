@@ -77,7 +77,7 @@ def data_from_bpcomp_file():
     return max_diff
 
 
-def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, min_maxdiff, **thresholds):
+def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, min_maxdiff, **thresholds):
     if trace_file_len('%s.trace' % chains[0]) < MIN_CYCLES:
         return True
     else:
@@ -100,7 +100,7 @@ def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, min_
         print('Log likelihood relative difference: %f' % loglik_rel_diff)
 
         # have the thresholds been broken?
-        loglik_effsize_broken = loglik_effsize > max_loglik_size
+        loglik_effsize_broken = loglik_effsize > max_loglik_effsize
         loglik_rel_diff_broken = loglik_rel_diff < min_loglik_rel_diff
 
         subprocess.call('./bpcomp -x %d %d %s' % (discard, TREE_SAMPLE_FREQ, ' '.join(chains)),
@@ -144,7 +144,7 @@ def terminate_all_processes(processes):
               help='The maximum number of generations to run the process for.')
 @click.option('--min-loglik-rel-diff', type=float, default=MIN_LOGLIK_REL_DIFF,
               help='Threshold log likelihood relative difference.')
-@click.option('--max-loglik-size', type=int, default=MAX_LOGLIK_EFFSIZE,
+@click.option('--max-loglik-effsize', type=int, default=MAX_LOGLIK_EFFSIZE,
               help='Threshold log likelihood effective size difference.')
 @click.option('--min-maxdiff', type=float, default=MIN_MAXDIFF,
               help='Threshold maximum difference.')
