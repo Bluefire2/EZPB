@@ -8,12 +8,19 @@ import shlex
 import sys
 from functools import reduce
 import configparser
+import re
+import os
+
+devnull = open(os.devnull, 'w')  # so we can suppress the output of subprocesses
 
 config = configparser.ConfigParser()
 config.read('config.ini')
 
 MAX_GEN_DISCARD = int(config['generations']['max_discard'])
 MIN_CYCLES = int(config['generations']['min_cycles'])
+
+TRACECOMP_OUT_FILE = config['output']['tracecomp']
+LOGLIK_LINE = int(config['output']['loglik_line'])
 
 
 N_THREADS = multiprocessing.cpu_count()
@@ -33,7 +40,7 @@ def trace_file_len(fname):
         return 0
 
 
-def check_thresholds(chains, max_gen, **thresholds):
+def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, **thresholds):
     if trace_file_len('%s.trace' % chains[0]) < MIN_CYCLES:
         return True
     else:
@@ -46,11 +53,28 @@ def check_thresholds(chains, max_gen, **thresholds):
             above_max_gen = above_max_gen and (generations > max_gen)
 
         # we can assume that all the chains have progressed about the same amount, so pick one of the generation values
-        # discard = min(g / 10, MAX_GEN_DISCARD)
-        # p = subprocess.call('./tracecomp -x %d %s' % (discard, ' '.join(chains)), shell=True)
-        # print(p)
+        discard = min(g / 10, MAX_GEN_DISCARD)
+        subprocess.call('./tracecomp -x %d %s' % (discard, ' '.join(chains)),
+                        shell=True, stdout=devnull, stderr=devnull)  # suppress output
+        # the results get written to a file
+        data = ''  # assume file will have more thant [LOGLIK_LINE] lines
+        with open(TRACECOMP_OUT_FILE) as f:
+            for i, line in enumerate(f):
+                if i == LOGLIK_LINE:
+                    data = line
 
-        return not above_max_gen
+        parsed_data = re.sub(r'\s+', ' ', data).split(' ')
+        loglik_effsize = int(parsed_data[1])
+        loglik_rel_diff = float(parsed_data[2])
+        print('Log likelihood effective size: %d' % loglik_effsize)
+        print('Log likelihood relative difference: %f' % loglik_rel_diff)
+
+        # have the thresholds been broken?
+        loglik_effsize_broken = loglik_effsize > max_loglik_size
+        loglik_rel_diff_broken = loglik_rel_diff < min_loglik_rel_diff
+
+        thresholds_broken = above_max_gen or (loglik_effsize_broken and loglik_rel_diff_broken)
+        return not thresholds_broken
 
 
 async def check_thresholds_periodic(chains, callback, **thresholds):
@@ -73,11 +97,11 @@ def mpirun_cmd(threads, phyle_name, chain_name):
               help='How many threads the process should run on.')
 @click.option('--max-gen', type=int, default=30000,
               help='The maximum number of generations to run the process for.')
-@click.option('--max-loglik', type=float, default=0.3,
-              help='Threshold log likelihood difference.')
-@click.option('--min-size', type=int, default=300,
-              help='Threshold effective size difference.')
-@click.option('--max-maxdiff', type=float, default=0.1,
+@click.option('--min-loglik-rel-diff', type=float, default=0.3,
+              help='Threshold log likelihood relative difference.')
+@click.option('--max-loglik-size', type=int, default=300,
+              help='Threshold log likelihood effective size difference.')
+@click.option('--min-maxdiff', type=float, default=0.1,
               help='Threshold maximum difference.')
 @click.argument('alignment', type=click.Path(exists=True), required=True)
 @click.argument('chains', type=str, required=True, nargs=-1)
