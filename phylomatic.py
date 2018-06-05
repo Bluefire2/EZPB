@@ -171,11 +171,12 @@ def cli(threads, alignments, chains, **thresholds):
         sys.exit(1)
     else:
         # sequentially process each alignment
-        for i in range(0, len(alignments)):
-            alignment = alignments[i]
+        for alignment in alignments:
             processes = []
             threads_per_chain = threads / chains
-            chain_names = [('alignment_%d_chain_%d' % (i, j)) for j in range(chains)]  # generate some chain names
+            alignment_file_name_without_extension = os.path.splitext(alignment)
+            # generate some chain names
+            chain_names = [('%s_chain_%d' % (alignment_file_name_without_extension[0], j + 1)) for j in range(chains)]
             print('Chains: %s' % ', '.join(chain_names))
 
             try:
@@ -194,7 +195,7 @@ def cli(threads, alignments, chains, **thresholds):
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(check_thresholds_periodic(chain_names, terminate_all_bound, **thresholds))
 
-                print('Alignment %d chains finished processing.' % i)
+                print('Alignment %s chains finished processing.' % alignment_file_name_without_extension[0])
             except BaseException:  # so that it catches KeyboardInterrupts
                 print('Exception raised, terminating all chains...')
                 terminate_all_processes(processes)
