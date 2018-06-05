@@ -116,3 +116,6 @@ venv.bak/
 
 # tracecomp generated file
 tracecomp.contdiff
+bpcomp.bpdiff
+bpcomp.bplist
+bpcomp.con.tre
