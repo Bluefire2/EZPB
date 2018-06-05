@@ -113,3 +113,6 @@ venv.bak/
 *.run
 *.trace
 *.treelist
+
+# tracecomp generated file
+tracecomp.contdiff
