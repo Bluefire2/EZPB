@@ -148,11 +148,13 @@ def terminate_all_processes(processes):
               help='Threshold log likelihood effective size difference.')
 @click.option('--min-maxdiff', type=float, default=MIN_MAXDIFF,
               help='Threshold maximum difference.')
-@click.argument('alignment', type=click.Path(exists=True), required=True)
+@click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
-def cli(threads, alignment, chains, **thresholds):
+def cli(threads, alignments, chains, **thresholds):
     """
-    ALIGNMENT: the path to the alignment file to process.
+    ALIGNMENTs: the paths to the alignment files to process. The alignments will be processed sequentially, and not in
+    parallel. To process in parallel, run several instances of this command, adjusting the number of threads
+    accordingly.
 
     CHAINS: the number of the chains to run in parallel. Threads will be shared evenly among the chains. The number of
     chains must be at least two, but cannot be greater than the number of threads allocated.
@@ -164,25 +166,34 @@ def cli(threads, alignment, chains, **thresholds):
         print('Error: The number of chains cannot be less than the number of threads allocated.')
         sys.exit(1)
     else:
-        processes = []
-        threads_per_chain = threads / chains
-        chain_names = [('chain_%d' % i) for i in range(chains)]  # generate some chain names
-        print('Chains: %s' % ', '.join(chain_names))
+        # sequentially process each alignment
+        for i in range(0, len(alignments)):
+            alignment = alignments[i]
+            processes = []
+            threads_per_chain = threads / chains
+            chain_names = [('alignment_%d_chain_%d' % (i, j)) for j in range(chains)]  # generate some chain names
+            print('Chains: %s' % ', '.join(chain_names))
 
-        try:
-            for chain_name in chain_names:
-                cmd = mpirun_cmd(threads_per_chain, alignment, chain_name)
-                click.echo('Starting run: %s' % ' '.join(cmd))
-                # open it and start running
-                process = subprocess.Popen(cmd)
-                processes.append(process)
+            try:
+                for chain_name in chain_names:
+                    cmd = mpirun_cmd(threads_per_chain, alignment, chain_name)
+                    click.echo('Starting run: %s' % ' '.join(cmd))
+                    # open it and start running
+                    process = subprocess.Popen(cmd)
+                    processes.append(process)
 
-            def terminate_all_bound():
+                def terminate_all_bound():
+                    terminate_all_processes(processes)
+
+                # This event loop blocks execution until it's done, thus preventing the next alignment from being
+                # processed until this one is done:
+                loop = asyncio.get_event_loop()
+                loop.run_until_complete(check_thresholds_periodic(chain_names, terminate_all_bound, **thresholds))
+
+                print('Alignment %d chains finished processing.' % i)
+            except BaseException:  # so that it catches KeyboardInterrupts
+                print('Exception raised, terminating all chains...')
                 terminate_all_processes(processes)
+                raise
 
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(check_thresholds_periodic(chain_names, terminate_all_bound, **thresholds))
-        except BaseException:  # so that it catches KeyboardInterrupts
-            print('Exception raised, terminating all chains...')
-            terminate_all_processes(processes)
-            raise
+            print('All alignment chains finished.')
