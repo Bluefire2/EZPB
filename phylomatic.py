@@ -79,7 +79,7 @@ def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, min_
         g = 0
         for chain in chains:
             generations = trace_file_len('%s.trace' % chain)
-            print(generations)
+            print('Generations for chain %s: %d' % (chain, generations))
             g = generations
             above_max_gen = above_max_gen and (generations > max_gen)
 
