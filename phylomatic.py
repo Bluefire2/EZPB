@@ -16,6 +16,8 @@ devnull = open(os.devnull, 'w')  # so we can suppress the output of subprocesses
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+CHECK_FREQ = float(config['default']['check_freq'])
+
 MAX_GEN_DISCARD = int(config['generations']['max_discard'])
 MIN_CYCLES = int(config['generations']['min_cycles'])
 
@@ -24,6 +26,8 @@ LOGLIK_LINE = int(config['output']['loglik_line'])
 
 BPCOMP_OUT_FILE = config['output']['bpcomp']
 MAX_DIFF_LINE = int(config['output']['max_diff_line'])
+
+TREE_SAMPLE_FREQ = int(config['default']['tree_sample_freq'])
 
 N_THREADS = multiprocessing.cpu_count()
 
@@ -93,7 +97,7 @@ def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, min_
         loglik_effsize_broken = loglik_effsize > max_loglik_size
         loglik_rel_diff_broken = loglik_rel_diff < min_loglik_rel_diff
 
-        subprocess.call('./bpcomp -x %d 5 %s' % (discard, ' '.join(chains)),
+        subprocess.call('./bpcomp -x %d %d %s' % (discard, TREE_SAMPLE_FREQ, ' '.join(chains)),
                         shell=True, stdout=devnull, stderr=devnull)  # suppress output
 
         # once again the results are written to a file
@@ -110,7 +114,7 @@ def check_thresholds(chains, max_gen, max_loglik_size, min_loglik_rel_diff, min_
 async def check_thresholds_periodic(chains, callback, **thresholds):
     while True:
         if check_thresholds(chains, **thresholds):
-            await asyncio.sleep(10)
+            await asyncio.sleep(CHECK_FREQ)
             continue
         else:
             callback()
