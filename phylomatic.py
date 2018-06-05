@@ -31,6 +31,12 @@ TREE_SAMPLE_FREQ = int(config['default']['tree_sample_freq'])
 
 N_THREADS = multiprocessing.cpu_count()
 
+# CLI defaults:
+MAX_GEN = int(config['thresholds']['max_gen'])
+MIN_LOGLIK_REL_DIFF = float(config['thresholds']['max_gen'])
+MAX_LOGLIK_EFFSIZE = int(config['thresholds']['max_gen'])
+MIN_MAXDIFF = float(config['thresholds']['max_gen'])
+
 
 def every(lst, fn):
     return reduce(lambda acc, elem: acc and fn(elem), lst, True)
@@ -134,13 +140,13 @@ def terminate_all_processes(processes):
 @click.command()
 @click.option('--threads', type=int, default=N_THREADS,
               help='How many threads the process should run on.')
-@click.option('--max-gen', type=int, default=30000,
+@click.option('--max-gen', type=int, default=MAX_GEN,
               help='The maximum number of generations to run the process for.')
-@click.option('--min-loglik-rel-diff', type=float, default=0.3,
+@click.option('--min-loglik-rel-diff', type=float, default=MIN_LOGLIK_REL_DIFF,
               help='Threshold log likelihood relative difference.')
-@click.option('--max-loglik-size', type=int, default=300,
+@click.option('--max-loglik-size', type=int, default=MAX_LOGLIK_EFFSIZE,
               help='Threshold log likelihood effective size difference.')
-@click.option('--min-maxdiff', type=float, default=0.1,
+@click.option('--min-maxdiff', type=float, default=MIN_MAXDIFF,
               help='Threshold maximum difference.')
 @click.argument('alignment', type=click.Path(exists=True), required=True)
 @click.argument('chains', type=str, required=True, nargs=-1)
