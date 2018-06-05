@@ -160,6 +160,9 @@ def cli(threads, alignment, chains, **thresholds):
     if len(chains) < 2:
         print('Error: Must specify at least two chains.')
         sys.exit(1)
+    elif len(chains) > threads:
+        print('Error: The number of chains cannot be less than the number of threads allocated.')
+        sys.exit(1)
     else:
         processes = []
         threads_per_chain = threads / len(chains)
