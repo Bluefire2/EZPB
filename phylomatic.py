@@ -122,6 +122,11 @@ def mpirun_cmd(threads, phyle_name, chain_name):
     return shlex.split('mpirun -np %d pb_mpi -cat -gtr -dgam 4 -d %s %s' % (threads, phyle_name, chain_name))
 
 
+def terminate_all_processes(processes):
+    for process in processes:
+        process.terminate()
+
+
 @click.command()
 @click.option('--threads', type=int, default=N_THREADS,
               help='How many threads the process should run on.')
@@ -148,17 +153,21 @@ def cli(threads, alignment, chains, **thresholds):
     else:
         processes = []
         threads_per_chain = threads / len(chains)
-        for chain_name in chains:
-            cmd = mpirun_cmd(threads_per_chain, alignment, chain_name)
-            click.echo('Starting run: %s' % cmd)
-            # open it and start running
-            process = subprocess.Popen(cmd)
-            processes.append(process)
-            print(process)
+        try:
+            for chain_name in chains:
+                cmd = mpirun_cmd(threads_per_chain, alignment, chain_name)
+                click.echo('Starting run: %s' % cmd)
+                # open it and start running
+                process = subprocess.Popen(cmd)
+                processes.append(process)
+                print(process)
 
-        def terminate_all():
-            for process in processes:
-                process.terminate()
+            def terminate_all_bound():
+                terminate_all_processes(processes)
 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(check_thresholds_periodic(list(chains), terminate_all, **thresholds))
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(check_thresholds_periodic(list(chains), terminate_all_bound, **thresholds))
+        except BaseException:  # so that it catches KeyboardInterrupts
+            print('Exception raised, terminating all chains...')
+            terminate_all_processes(processes)
+            raise
