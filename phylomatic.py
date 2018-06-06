@@ -125,10 +125,10 @@ def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, m
         return not thresholds_broken
 
 
-async def check_thresholds_periodic(chains, callback, **thresholds):
+async def check_thresholds_periodic(chains, callback, check_freq, **thresholds):
     while True:
         if check_thresholds(chains, **thresholds):
-            await asyncio.sleep(CHECK_FREQ)
+            await asyncio.sleep(check_freq)
             continue
         else:
             callback()
@@ -160,7 +160,7 @@ def terminate_all_processes(processes):
               help='How often to check the thresholds (in seconds). Default: %f.' % CHECK_FREQ)
 @click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
-def cli(threads, alignments, chains, **thresholds):
+def cli(threads, alignments, chains, check_freq, **thresholds):
     """
     ALIGNMENTs: the paths to the alignment files to process. The alignments will be processed sequentially, and not in
     parallel. To process in parallel, run several instances of this command, adjusting the number of threads
@@ -199,7 +199,8 @@ def cli(threads, alignments, chains, **thresholds):
                 # This event loop blocks execution until it's done, thus preventing the next alignment from being
                 # processed until this one is done:
                 loop = asyncio.get_event_loop()
-                loop.run_until_complete(check_thresholds_periodic(chain_names, terminate_all_bound, **thresholds))
+                loop.run_until_complete(check_thresholds_periodic(
+                    chain_names, terminate_all_bound, check_freq, **thresholds))
 
                 print('Alignment %s chains finished processing.' % alignment_file_name_without_extension[0])
             except BaseException:  # so that it catches KeyboardInterrupts
