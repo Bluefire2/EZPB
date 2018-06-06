@@ -11,17 +11,6 @@ import configparser
 import re
 import os
 
-# Output locations
-LOGFILE = 'alignments.log.csv'
-TREE_FILE_NAME = 'bpcomp.con.tre'
-
-# Output file data
-CHAIN_FILE_TYPES = ['.chain', '.monitor', '.param', '.run', '.trace', '.treelist']
-
-
-def new_tree_file_name(alignment):
-    return '%s.tre' % alignment
-
 
 devnull = open(os.devnull, 'w')  # so we can suppress the output of subprocesses
 
@@ -48,6 +37,18 @@ MAX_GEN = int(config['thresholds']['max_gen'])
 MIN_LOGLIK_REL_DIFF = float(config['thresholds']['min_loglik_rel_diff'])
 MAX_LOGLIK_EFFSIZE = int(config['thresholds']['max_loglik_effsize'])
 MIN_MAXDIFF = float(config['thresholds']['min_maxdiff'])
+
+# Output locations
+LOGFILE = 'alignments.log.csv'
+TREE_FILE_NAME = 'bpcomp.con.tre'
+OUTPUT_DIRECTORY = config['output']['directory']
+
+# Output file data
+CHAIN_FILE_TYPES = ['.chain', '.monitor', '.param', '.run', '.trace', '.treelist']
+
+
+def new_tree_file_name(alignment):
+    return '%s.tre' % alignment
 
 
 def every(lst, fn):
@@ -206,7 +207,7 @@ def terminate_all_processes(processes):
 
 
 # This is the function that is called when the threshold check fails
-def check_fail_callback(convergence, alignment, chains, processes):
+def check_fail_callback(convergence, alignment, chains, processes, output_dir):
     # Stop all chain runs
     terminate_all_processes(processes)
 
@@ -220,9 +221,9 @@ def check_fail_callback(convergence, alignment, chains, processes):
     add_row_to_logfile(*log_data)
 
     # Create output directory, and subdirectories: analyses, good_trees, bad_trees
-    analyses_dir = os.path.join('output', 'analyses', alignment)
-    good_trees_dir = os.path.join('output', 'good_trees')
-    bad_trees_dir = os.path.join('output', 'bad_trees')
+    analyses_dir = os.path.join(output_dir, 'analyses', alignment)
+    good_trees_dir = os.path.join(output_dir, 'good_trees')
+    bad_trees_dir = os.path.join(output_dir, 'bad_trees')
 
     if not os.path.exists(analyses_dir):
         os.makedirs(analyses_dir)
@@ -264,11 +265,13 @@ def check_fail_callback(convergence, alignment, chains, processes):
               help='Threshold maximum difference. Default: %f.' % MIN_MAXDIFF)
 @click.option('--check-freq', type=float, default=CHECK_FREQ,
               help='How often to check for convergence (in seconds). Default: %f.' % CHECK_FREQ)
-@click.option('--min-cycles', type=int, default=CHECK_FREQ,
-              help='Gow many generations to ignore before checking for convergence. Default: %d.' % MIN_CYCLES)
+@click.option('--min-cycles', type=int, default=MIN_CYCLES,
+              help='How many generations to ignore before checking for convergence. Default: %d.' % MIN_CYCLES)
+@click.option('--out', type=str, default=OUTPUT_DIRECTORY,
+              help='The directory to store the output files in. Default: %s.' % OUTPUT_DIRECTORY)
 @click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
-def cli(threads, alignments, chains, check_freq, min_cycles, **thresholds):
+def cli(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
     """
     ALIGNMENTs: the paths to the alignment files to process. The alignments will be processed sequentially, and not in
     parallel. To process in parallel, run several instances of this command, adjusting the number of threads
@@ -312,7 +315,8 @@ def cli(threads, alignments, chains, check_freq, min_cycles, **thresholds):
                 callback = partial(check_fail_callback,
                                    alignment=alignment_file_name_without_extension,
                                    chains=chain_names,
-                                   processes=processes)
+                                   processes=processes,
+                                   output_dir=out)
 
                 # This event loop blocks execution until it's done, thus preventing the next alignment from being
                 # processed until this one is done:

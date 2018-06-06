@@ -120,6 +120,7 @@ bpcomp.bpdiff
 bpcomp.bplist
 bpcomp.con.tre
 output
+phylomatic
 
 # output logs
 *.log.csv
