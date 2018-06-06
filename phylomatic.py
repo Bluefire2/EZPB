@@ -10,11 +10,14 @@ from functools import reduce, partial
 import configparser
 import re
 import os
+from pkg_resources import Requirement, resource_filename
+
 
 devnull = open(os.devnull, 'w')  # so we can suppress the output of subprocesses
 
+CONFIG_FILE = resource_filename(Requirement.parse("phyl-o-matic"), "config.ini")
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read(CONFIG_FILE)
 
 CHECK_FREQ = float(config['default']['check_freq'])
 
@@ -149,7 +152,7 @@ def check_thresholds(alignment, chains, min_cycles, max_gen, max_loglik_effsize,
 
         # we can assume that all the chains have progressed about the same amount, so pick one of the generation values
         discard = discard_samples(g)
-        subprocess.call('./tracecomp -x %d %s' % (discard, ' '.join(chain_full_names)),
+        subprocess.call('tracecomp -x %d %s' % (discard, ' '.join(chain_full_names)),
                         shell=True, stdout=devnull, stderr=devnull)  # suppress output
 
         # the results get written to a file
@@ -158,7 +161,7 @@ def check_thresholds(alignment, chains, min_cycles, max_gen, max_loglik_effsize,
         loglik_effsize_broken = loglik_effsize > max_loglik_effsize
         loglik_rel_diff_broken = loglik_rel_diff < min_loglik_rel_diff
 
-        subprocess.call('./bpcomp -x %d %d %s' % (discard, TREE_SAMPLE_FREQ, ' '.join(chain_full_names)),
+        subprocess.call('bpcomp -x %d %d %s' % (discard, TREE_SAMPLE_FREQ, ' '.join(chain_full_names)),
                         shell=True, stdout=devnull, stderr=devnull)  # suppress output
 
         # once again the results are written to a file

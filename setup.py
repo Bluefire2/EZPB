@@ -1,9 +1,13 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='Phyl-o-Matic',
     version='0.0',
-    py_modules=['phylomatic'],
+    packages=find_packages(),
+    include_package_data=True,
+    package_data={
+        '': ['*.ini', 'tracecomp', 'pb_mpi']
+    },
     install_requires=[
         'Click'
     ],
