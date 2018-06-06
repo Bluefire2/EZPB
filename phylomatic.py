@@ -156,6 +156,8 @@ def terminate_all_processes(processes):
               help='Threshold log likelihood effective size difference.')
 @click.option('--min-maxdiff', type=float, default=MIN_MAXDIFF,
               help='Threshold maximum difference.')
+@click.option('--check-freq', type=float, default=CHECK_FREQ,
+              help='How often to check the thresholds (in seconds).')
 @click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
 def cli(threads, alignments, chains, **thresholds):
