@@ -99,8 +99,8 @@ class Convergence(object):
         print('Max diff: %f' % self.max_diff)
 
 
-def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, min_maxdiff, **thresholds):
-    if trace_file_len('%s.trace' % chains[0]) < MIN_CYCLES:
+def check_thresholds(chains, min_cycles, max_gen, max_loglik_effsize, min_loglik_rel_diff, min_maxdiff):
+    if trace_file_len('%s.trace' % chains[0]) < min_cycles:
         return None
     else:
         all_generations = {}
@@ -141,9 +141,9 @@ def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, m
         return Convergence(stop, converged, loglik_effsize, loglik_rel_diff, max_diff, all_generations)
 
 
-async def check_thresholds_periodic(chains, callback, check_freq, **thresholds):
+async def check_thresholds_periodic(chains, callback, check_freq, min_cycles, **thresholds):
     while True:
-        result = check_thresholds(chains, **thresholds)
+        result = check_thresholds(chains, min_cycles, **thresholds)
         # None indicates that the minimum number of cycles has not yet been reached
         if result is None or not result.stop:
             if result is not None:
@@ -180,10 +180,12 @@ def terminate_all_processes(processes):
 @click.option('--min-maxdiff', type=float, default=MIN_MAXDIFF,
               help='Threshold maximum difference. Default: %f.' % MIN_MAXDIFF)
 @click.option('--check-freq', type=float, default=CHECK_FREQ,
-              help='How often to check the thresholds (in seconds). Default: %f.' % CHECK_FREQ)
+              help='How often to check for convergence (in seconds). Default: %f.' % CHECK_FREQ)
+@click.option('--min-cycles', type=int, default=CHECK_FREQ,
+              help='Gow many generations to ignore before checking for convergence. Default: %d.' % MIN_CYCLES)
 @click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
-def cli(threads, alignments, chains, check_freq, **thresholds):
+def cli(threads, alignments, chains, check_freq, min_cycles, **thresholds):
     """
     ALIGNMENTs: the paths to the alignment files to process. The alignments will be processed sequentially, and not in
     parallel. To process in parallel, run several instances of this command, adjusting the number of threads
@@ -223,7 +225,7 @@ def cli(threads, alignments, chains, check_freq, **thresholds):
                 # processed until this one is done:
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(check_thresholds_periodic(
-                    chain_names, terminate_all_bound, check_freq, **thresholds))
+                    chain_names, terminate_all_bound, check_freq, min_cycles, **thresholds))
 
                 print('Alignment %s chains finished processing.' % alignment_file_name_without_extension[0])
             except BaseException:  # so that it catches KeyboardInterrupts
