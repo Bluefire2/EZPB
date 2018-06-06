@@ -14,6 +14,15 @@ import os
 # Output locations
 LOGFILE = 'alignments.log.csv'
 
+# Output file data
+CHAIN_FILE_TYPES = ['.chain', '.monitor', '.param', '.run', '.trace', '.treelist']
+TREE_FILE_NAME = 'bpcomp.con.tre'
+
+
+def new_tree_file_name(alignment):
+    return '%s.tre' % alignment
+
+
 devnull = open(os.devnull, 'w')  # so we can suppress the output of subprocesses
 
 config = configparser.ConfigParser()
@@ -191,9 +200,43 @@ def terminate_all_processes(processes):
 
 # This is the function that is called when the threshold check fails
 def check_fail_callback(convergence, alignment, processes):
+    # Stop all chain runs
+    terminate_all_processes(processes)
+
+    # Write output data to the log
     log_data = [alignment] + convergence.as_list()
     add_row_to_logfile(*log_data)
-    terminate_all_processes(processes)
+
+    # Create output directory, and subdirectories: analyses, good_trees, bad_trees
+    analyses_dir = os.path.join('output', 'analyses', alignment)
+    good_trees_dir = os.path.join('output', 'good_trees')
+    bad_trees_dir = os.path.join('output', 'bad_trees')
+
+    if not os.path.exists(analyses_dir):
+        os.makedirs(analyses_dir)
+
+    if not os.path.exists(good_trees_dir):
+        os.makedirs(good_trees_dir)
+
+    if not os.path.exists(bad_trees_dir):
+        os.makedirs(bad_trees_dir)
+
+    # Move chain files into output/analyses/[alignment]: .chain, .monitor, .param, .run, .trace, .treelist
+    # Move chain files into output/analyses/[alignment]: .chain, .monitor, .param, .run, .trace, .treelist
+    for file_type in CHAIN_FILE_TYPES:
+        for file in os.listdir('.'):
+            if file.endswith(file_type):
+                current_path = os.path.join('.', file)
+                new_path = os.path.join(analyses_dir, file)
+                os.rename(current_path, new_path)
+
+    # If the chains converged, move bpcomp.con.tre to good_trees, otherwise move it to bad_trees
+    # Also, rename it to [alignment].tre
+    if convergence.converged:
+        directory = good_trees_dir
+    else:
+        directory = bad_trees_dir
+    os.rename(TREE_FILE_NAME, os.path.join(directory, new_tree_file_name(alignment)))
 
 
 @click.command()
@@ -236,9 +279,9 @@ def cli(threads, alignments, chains, check_freq, min_cycles, **thresholds):
         for alignment in alignments:
             processes = []
             threads_per_chain = threads / chains
-            alignment_file_name_without_extension = os.path.splitext(alignment)
+            alignment_file_name_without_extension = os.path.splitext(alignment)[0]
             # generate some chain names
-            chain_names = [('%s_chain_%d' % (alignment_file_name_without_extension[0], j + 1)) for j in range(chains)]
+            chain_names = [('%s_chain_%d' % (alignment_file_name_without_extension, j + 1)) for j in range(chains)]
             print('Chains: %s' % ', '.join(chain_names))
 
             try:
@@ -249,7 +292,8 @@ def cli(threads, alignments, chains, check_freq, min_cycles, **thresholds):
                     process = subprocess.Popen(cmd)
                     processes.append(process)
 
-                callback = partial(check_fail_callback, alignment=alignment, processes=processes)
+                callback = partial(check_fail_callback,
+                                   alignment=alignment_file_name_without_extension, processes=processes)
 
                 # This event loop blocks execution until it's done, thus preventing the next alignment from being
                 # processed until this one is done:
