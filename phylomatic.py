@@ -172,6 +172,9 @@ async def check_thresholds_periodic(chains, callback, check_freq, min_cycles, **
             await asyncio.sleep(check_freq)
             continue
         else:
+            # print some data for the user
+            result.print_data()
+            print('')  # new line
             callback(result)
             break
 
