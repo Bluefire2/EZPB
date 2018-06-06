@@ -119,3 +119,6 @@ tracecomp.contdiff
 bpcomp.bpdiff
 bpcomp.bplist
 bpcomp.con.tre
+
+# output logs
+*.log.csv

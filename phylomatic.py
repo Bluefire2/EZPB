@@ -11,6 +11,9 @@ import configparser
 import re
 import os
 
+# Output locations
+LOGFILE = 'alignments.log.csv'
+
 devnull = open(os.devnull, 'w')  # so we can suppress the output of subprocesses
 
 config = configparser.ConfigParser()
@@ -77,6 +80,18 @@ def data_from_bpcomp_file():
     return max_diff
 
 
+def create_logfile():
+    with open(LOGFILE, 'w+') as f:
+        f.write('alignment, converged, loglik_effsize, loglik_rel_diff, max_diff')
+
+
+# Precondition: logfile must exist
+def add_row_to_logfile(*args):
+    with open(LOGFILE, 'a') as f:
+        args_as_strings = map(str, args)
+        f.write('\n' + ', '.join(args_as_strings))
+
+
 def discard_samples(chain_length):
     return min(chain_length / 10, MAX_GEN_DISCARD)
 
@@ -90,6 +105,9 @@ class Convergence(object):
         self.loglik_rel_diff = loglik_rel_diff
         self.max_diff = max_diff
         self.generations = generations
+
+    def as_list(self):
+        return [self.converged, self.loglik_effsize, self.loglik_rel_diff, self.max_diff]
 
     def print_data(self):
         for chain, gen in self.generations.items():
@@ -201,6 +219,9 @@ def cli(threads, alignments, chains, check_freq, min_cycles, **thresholds):
         print('Error: The number of chains cannot be less than the number of threads allocated.')
         sys.exit(1)
     else:
+        # create a logfile
+        create_logfile()
+
         # sequentially process each alignment
         for alignment in alignments:
             processes = []
@@ -218,14 +239,17 @@ def cli(threads, alignments, chains, check_freq, min_cycles, **thresholds):
                     process = subprocess.Popen(cmd)
                     processes.append(process)
 
-                def terminate_all_bound():
+                # This is the function that is called when the threshold check fails
+                def callback(convergence):
+                    log_data = [alignment] + convergence.as_list()
+                    add_row_to_logfile(*log_data)
                     terminate_all_processes(processes)
 
                 # This event loop blocks execution until it's done, thus preventing the next alignment from being
                 # processed until this one is done:
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(check_thresholds_periodic(
-                    chain_names, terminate_all_bound, check_freq, min_cycles, **thresholds))
+                    chain_names, callback, check_freq, min_cycles, **thresholds))
 
                 print('Alignment %s chains finished processing.' % alignment_file_name_without_extension[0])
             except BaseException:  # so that it catches KeyboardInterrupts
