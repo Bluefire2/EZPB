@@ -114,11 +114,12 @@ venv.bak/
 *.trace
 *.treelist
 
-# tracecomp generated file
+# generated files
 tracecomp.contdiff
 bpcomp.bpdiff
 bpcomp.bplist
 bpcomp.con.tre
+output
 
 # output logs
 *.log.csv

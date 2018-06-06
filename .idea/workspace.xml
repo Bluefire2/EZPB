@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="75f657f9-36c0-4e4d-8fce-a31b9405db9b" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/bad_trees/test_alignment.tre" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/bad_trees/test_alignment_2.tre" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/phylomatic.py" beforeDir="false" afterPath="$PROJECT_DIR$/phylomatic.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,11 +19,11 @@
     <splitter split-orientation="horizontal" split-proportion="0.5">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="phylomatic.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="phylomatic.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/phylomatic.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="204">
-                  <caret line="194" selection-start-line="194" selection-end-line="194" />
+                <state relative-caret-position="358">
+                  <caret line="115" column="32" lean-forward="true" selection-start-line="115" selection-start-column="32" selection-end-line="115" selection-end-column="32" />
                   <folding>
                     <element signature="e#0#12#0" expanded="true" />
                   </folding>
@@ -27,11 +31,20 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="alignments.log.csv" pinned="false" current-in-tab="true">
+          <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/.gitignore">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="960">
+                  <caret line="121" column="6" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="6" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="alignments.log.csv" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/alignments.log.csv">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="30">
-                  <caret line="2" column="28" lean-forward="true" selection-start-line="2" selection-start-column="28" selection-end-line="2" selection-end-column="28" />
+                <state>
+                  <caret column="81" selection-start-column="81" selection-end-column="81" />
                 </state>
               </provider>
             </entry>
@@ -40,7 +53,7 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="config.ini" pinned="false" current-in-tab="true">
+          <file leaf-file-name="config.ini" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/config.ini">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="270">
@@ -49,11 +62,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="tracecomp.contdiff" pinned="false" current-in-tab="false">
+          <file leaf-file-name="tracecomp.contdiff" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/tracecomp.contdiff">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="45">
-                  <caret line="3" column="34" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
+                  <caret line="3" column="29" selection-start-line="3" selection-start-column="29" selection-end-line="3" selection-end-column="29" />
                 </state>
               </provider>
             </entry>
@@ -78,6 +91,12 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>create_</find>
+      <find>print</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -93,8 +112,8 @@
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/config.ini" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/alignments.log.csv" />
+        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/phylomatic.py" />
       </list>
     </option>
@@ -126,6 +145,11 @@
             <path>
               <item name="phyl-o-matic" type="b2602c69:ProjectViewProjectNode" />
               <item name="phyl-o-matic" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="phyl-o-matic" type="b2602c69:ProjectViewProjectNode" />
+              <item name="phyl-o-matic" type="462c0819:PsiDirectoryNode" />
+              <item name="output" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -349,12 +373,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tracecomp.contdiff">
+    <entry file="file://$PROJECT_DIR$/test_alignment_2.phy">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bpcomp.con.tre">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alignments.log" />
+    <entry file="file://$PROJECT_DIR$/alignments.conv.log" />
+    <entry file="file://$PROJECT_DIR$/alignments.log.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="34" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
+        <state>
+          <caret column="81" selection-start-column="81" selection-end-column="81" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_alignment_chain_1.trace">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/bpcomp.bpdiff">
       <provider selected="true" editor-type-id="text-editor">
@@ -363,12 +398,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test_alignment_2.phy">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bpcomp.con.tre">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/config.ini">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -376,29 +405,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/alignments.log" />
-    <entry file="file://$PROJECT_DIR$/alignments.conv.log" />
+    <entry file="file://$PROJECT_DIR$/tracecomp.contdiff">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="29" selection-start-line="3" selection-start-column="29" selection-end-line="3" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1020">
-          <caret line="123" column="9" selection-start-line="123" selection-start-column="9" selection-end-line="123" selection-end-column="9" />
+        <state relative-caret-position="960">
+          <caret line="121" column="6" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="6" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phylomatic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="194" selection-start-line="194" selection-end-line="194" />
+        <state relative-caret-position="358">
+          <caret line="115" column="32" lean-forward="true" selection-start-line="115" selection-start-column="32" selection-end-line="115" selection-end-column="32" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alignments.log.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="28" lean-forward="true" selection-start-line="2" selection-start-column="28" selection-end-line="2" selection-end-column="28" />
         </state>
       </provider>
     </entry>

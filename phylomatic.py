@@ -13,10 +13,10 @@ import os
 
 # Output locations
 LOGFILE = 'alignments.log.csv'
+TREE_FILE_NAME = 'bpcomp.con.tre'
 
 # Output file data
 CHAIN_FILE_TYPES = ['.chain', '.monitor', '.param', '.run', '.trace', '.treelist']
-TREE_FILE_NAME = 'bpcomp.con.tre'
 
 
 def new_tree_file_name(alignment):
@@ -89,9 +89,10 @@ def data_from_bpcomp_file():
     return max_diff
 
 
-def create_logfile():
+def create_logfile(chains):
     with open(LOGFILE, 'w+') as f:
-        f.write('alignment, converged, loglik_effsize, loglik_rel_diff, max_diff')
+        chain_columns = ', '.join(chains)
+        f.write('alignment, converged, loglik_effsize, loglik_rel_diff, max_diff, ' + chain_columns)
 
 
 # Precondition: logfile must exist
@@ -126,22 +127,28 @@ class Convergence(object):
         print('Max diff: %f' % self.max_diff)
 
 
-def check_thresholds(chains, min_cycles, max_gen, max_loglik_effsize, min_loglik_rel_diff, min_maxdiff):
-    if trace_file_len('%s.trace' % chains[0]) < min_cycles:
+def chain_full_name(alignment, chain):
+    return '%s_%s' % (alignment, chain)
+
+
+def check_thresholds(alignment, chains, min_cycles, max_gen, max_loglik_effsize, min_loglik_rel_diff, min_maxdiff):
+    if trace_file_len('%s.trace' % chain_full_name(alignment, chains[0])) < min_cycles:
         return None
     else:
         all_generations = {}
         above_max_gen = True
         g = 0
         for chain in chains:
-            generations = trace_file_len('%s.trace' % chain)
+            generations = trace_file_len('%s.trace' % chain_full_name(alignment, chain))
             all_generations[chain] = generations
             g = generations
             above_max_gen = above_max_gen and (generations > max_gen)
 
+        chain_full_names = [chain_full_name(alignment, chain) for chain in chains]
+
         # we can assume that all the chains have progressed about the same amount, so pick one of the generation values
         discard = discard_samples(g)
-        subprocess.call('./tracecomp -x %d %s' % (discard, ' '.join(chains)),
+        subprocess.call('./tracecomp -x %d %s' % (discard, ' '.join(chain_full_names)),
                         shell=True, stdout=devnull, stderr=devnull)  # suppress output
 
         # the results get written to a file
@@ -150,7 +157,7 @@ def check_thresholds(chains, min_cycles, max_gen, max_loglik_effsize, min_loglik
         loglik_effsize_broken = loglik_effsize > max_loglik_effsize
         loglik_rel_diff_broken = loglik_rel_diff < min_loglik_rel_diff
 
-        subprocess.call('./bpcomp -x %d %d %s' % (discard, TREE_SAMPLE_FREQ, ' '.join(chains)),
+        subprocess.call('./bpcomp -x %d %d %s' % (discard, TREE_SAMPLE_FREQ, ' '.join(chain_full_names)),
                         shell=True, stdout=devnull, stderr=devnull)  # suppress output
 
         # once again the results are written to a file
@@ -168,9 +175,9 @@ def check_thresholds(chains, min_cycles, max_gen, max_loglik_effsize, min_loglik
         return Convergence(stop, converged, loglik_effsize, loglik_rel_diff, max_diff, all_generations)
 
 
-async def check_thresholds_periodic(chains, callback, check_freq, min_cycles, **thresholds):
+async def check_thresholds_periodic(alignment, chains, callback, check_freq, min_cycles, **thresholds):
     while True:
-        result = check_thresholds(chains, min_cycles, **thresholds)
+        result = check_thresholds(alignment, chains, min_cycles, **thresholds)
         # None indicates that the minimum number of cycles has not yet been reached
         if result is None or not result.stop:
             if result is not None:
@@ -199,12 +206,17 @@ def terminate_all_processes(processes):
 
 
 # This is the function that is called when the threshold check fails
-def check_fail_callback(convergence, alignment, processes):
+def check_fail_callback(convergence, alignment, chains, processes):
     # Stop all chain runs
     terminate_all_processes(processes)
 
     # Write output data to the log
-    log_data = [alignment] + convergence.as_list()
+    generations_list = [0 for i in convergence.generations.items()]
+    for chain, generations in convergence.generations.items():
+        i = chains.index(chain)
+        generations_list[i] = generations
+
+    log_data = [alignment] + convergence.as_list() + generations_list
     add_row_to_logfile(*log_data)
 
     # Create output directory, and subdirectories: analyses, good_trees, bad_trees
@@ -272,20 +284,25 @@ def cli(threads, alignments, chains, check_freq, min_cycles, **thresholds):
         print('Error: The number of chains cannot be less than the number of threads allocated.')
         sys.exit(1)
     else:
+        # generate some chain names
+        chain_names = [('chain_%d' % (j + 1)) for j in range(chains)]
+        print('Chains: %s' % ', '.join(chain_names))
+
         # create a logfile
-        create_logfile()
+        create_logfile(chain_names)
 
         # sequentially process each alignment
         for alignment in alignments:
             processes = []
             threads_per_chain = threads / chains
             alignment_file_name_without_extension = os.path.splitext(alignment)[0]
-            # generate some chain names
-            chain_names = [('%s_chain_%d' % (alignment_file_name_without_extension, j + 1)) for j in range(chains)]
-            print('Chains: %s' % ', '.join(chain_names))
+
+            # generate specific chain file names
+            chain_full_names = [chain_full_name(alignment_file_name_without_extension, chain_name)
+                                for chain_name in chain_names]
 
             try:
-                for chain_name in chain_names:
+                for chain_name in chain_full_names:
                     cmd = mpirun_cmd(threads_per_chain, alignment, chain_name)
                     click.echo('Starting run: %s' % ' '.join(cmd))
                     # open it and start running
@@ -293,15 +310,17 @@ def cli(threads, alignments, chains, check_freq, min_cycles, **thresholds):
                     processes.append(process)
 
                 callback = partial(check_fail_callback,
-                                   alignment=alignment_file_name_without_extension, processes=processes)
+                                   alignment=alignment_file_name_without_extension,
+                                   chains=chain_names,
+                                   processes=processes)
 
                 # This event loop blocks execution until it's done, thus preventing the next alignment from being
                 # processed until this one is done:
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(check_thresholds_periodic(
-                    chain_names, callback, check_freq, min_cycles, **thresholds))
+                    alignment_file_name_without_extension, chain_names, callback, check_freq, min_cycles, **thresholds))
 
-                print('Alignment %s chains finished processing.' % alignment_file_name_without_extension[0])
+                print('Alignment %s chains finished processing.' % alignment_file_name_without_extension)
             except BaseException:  # so that it catches KeyboardInterrupts
                 print('Exception raised, terminating all chains...')
                 terminate_all_processes(processes)
