@@ -33,9 +33,9 @@ N_THREADS = multiprocessing.cpu_count()
 
 # CLI defaults:
 MAX_GEN = int(config['thresholds']['max_gen'])
-MIN_LOGLIK_REL_DIFF = float(config['thresholds']['max_gen'])
-MAX_LOGLIK_EFFSIZE = int(config['thresholds']['max_gen'])
-MIN_MAXDIFF = float(config['thresholds']['max_gen'])
+MIN_LOGLIK_REL_DIFF = float(config['thresholds']['min_loglik_rel_diff'])
+MAX_LOGLIK_EFFSIZE = int(config['thresholds']['max_loglik_effsize'])
+MIN_MAXDIFF = float(config['thresholds']['min_maxdiff'])
 
 
 def every(lst, fn):
@@ -116,6 +116,10 @@ def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, m
 
         # have the thresholds been broken?
         max_diff_broken = max_diff < min_maxdiff
+
+        # print('Thresholds: max loglik %d, min loglik rel diff %f, min maxdiff %f'
+        #       % (max_loglik_effsize, min_loglik_rel_diff, min_maxdiff))
+        # print('Broken: %d %d %d' % (loglik_effsize_broken, loglik_rel_diff_broken, max_diff_broken))
 
         thresholds_broken = above_max_gen or (loglik_effsize_broken and loglik_rel_diff_broken and max_diff_broken)
         return not thresholds_broken
