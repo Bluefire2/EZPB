@@ -6,7 +6,7 @@ from contextlib import suppress
 import time
 import shlex
 import sys
-from functools import reduce
+from functools import reduce, partial
 import configparser
 import re
 import os
@@ -186,6 +186,13 @@ def terminate_all_processes(processes):
         process.terminate()
 
 
+# This is the function that is called when the threshold check fails
+def check_fail_callback(convergence, alignment, processes):
+    log_data = [alignment] + convergence.as_list()
+    add_row_to_logfile(*log_data)
+    terminate_all_processes(processes)
+
+
 @click.command()
 @click.option('--threads', type=int, default=N_THREADS,
               help='How many threads the process should run on. Default: %d.' % N_THREADS)
@@ -239,11 +246,7 @@ def cli(threads, alignments, chains, check_freq, min_cycles, **thresholds):
                     process = subprocess.Popen(cmd)
                     processes.append(process)
 
-                # This is the function that is called when the threshold check fails
-                def callback(convergence):
-                    log_data = [alignment] + convergence.as_list()
-                    add_row_to_logfile(*log_data)
-                    terminate_all_processes(processes)
+                callback = partial(check_fail_callback, alignment=alignment, processes=processes)
 
                 # This event loop blocks execution until it's done, thus preventing the next alignment from being
                 # processed until this one is done:
