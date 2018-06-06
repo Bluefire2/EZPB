@@ -11,7 +11,6 @@ import configparser
 import re
 import os
 
-
 devnull = open(os.devnull, 'w')  # so we can suppress the output of subprocesses
 
 config = configparser.ConfigParser()
@@ -90,15 +89,16 @@ def data_from_bpcomp_file():
     return max_diff
 
 
-def create_logfile(chains):
-    with open(LOGFILE, 'w+') as f:
+# Precondition: output directory must exist
+def create_logfile(output_dir, chains):
+    with open(os.path.join(output_dir, LOGFILE), 'w+') as f:
         chain_columns = ', '.join(chains)
         f.write('alignment, converged, loglik_effsize, loglik_rel_diff, max_diff, ' + chain_columns)
 
 
 # Precondition: logfile must exist
-def add_row_to_logfile(*args):
-    with open(LOGFILE, 'a') as f:
+def add_row_to_logfile(output_dir, *args):
+    with open(os.path.join(output_dir, LOGFILE), 'a') as f:
         args_as_strings = map(str, args)
         f.write('\n' + ', '.join(args_as_strings))
 
@@ -218,7 +218,7 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir):
         generations_list[i] = generations
 
     log_data = [alignment] + convergence.as_list() + generations_list
-    add_row_to_logfile(*log_data)
+    add_row_to_logfile(output_dir, *log_data)
 
     # Create output directory, and subdirectories: analyses, good_trees, bad_trees
     analyses_dir = os.path.join(output_dir, 'analyses', alignment)
@@ -291,8 +291,10 @@ def cli(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
         chain_names = [('chain_%d' % (j + 1)) for j in range(chains)]
         print('Chains: %s' % ', '.join(chain_names))
 
+        # create the output directory
+        os.mkdir(out)
         # create a logfile
-        create_logfile(chain_names)
+        create_logfile(out, chain_names)
 
         # sequentially process each alignment
         for alignment in alignments:
