@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="75f657f9-36c0-4e4d-8fce-a31b9405db9b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/phylomatic.py" beforeDir="false" afterPath="$PROJECT_DIR$/phylomatic.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,8 +18,8 @@
           <file leaf-file-name="phylomatic.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/phylomatic.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="609">
-                  <caret line="312" column="56" selection-start-line="312" selection-start-column="56" selection-end-line="312" selection-end-column="56" />
+                <state relative-caret-position="219">
+                  <caret line="286" column="113" selection-start-line="286" selection-start-column="113" selection-end-line="286" selection-end-column="113" />
                   <folding>
                     <element signature="e#0#12#0" expanded="true" />
                   </folding>
@@ -438,8 +437,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/phylomatic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="609">
-          <caret line="312" column="56" selection-start-line="312" selection-start-column="56" selection-end-line="312" selection-end-column="56" />
+        <state relative-caret-position="219">
+          <caret line="286" column="113" selection-start-line="286" selection-start-column="113" selection-end-line="286" selection-end-column="113" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>

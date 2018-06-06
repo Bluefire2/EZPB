@@ -279,9 +279,12 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir):
 @click.argument('chains', type=int, required=True)
 def cli(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
     """
-    ALIGNMENTs: the paths to the alignment files to process. The alignments will be processed sequentially, and not in
+    ALIGNMENTS: the paths to the alignment files to process. The alignments will be processed sequentially, and not in
     parallel. To process in parallel, run several instances of this command, adjusting the number of threads
     accordingly.
+
+    Alternatively, the paths can be to directories. In that case, all files of the relevant file type in the directory
+    will be processed sequentially. The file types that the command accepts can be set in the configuration file.
 
     CHAINS: the number of the chains to run in parallel. Threads will be shared evenly among the chains. The number of
     chains must be at least two, but cannot be greater than the number of threads allocated.
