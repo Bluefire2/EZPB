@@ -147,17 +147,17 @@ def terminate_all_processes(processes):
 
 @click.command()
 @click.option('--threads', type=int, default=N_THREADS,
-              help='How many threads the process should run on.')
+              help='How many threads the process should run on. Default: %d.' % N_THREADS)
 @click.option('--max-gen', type=int, default=MAX_GEN,
-              help='The maximum number of generations to run the process for.')
+              help='The maximum number of generations to run the process for. Default: %d.' % MAX_GEN)
 @click.option('--min-loglik-rel-diff', type=float, default=MIN_LOGLIK_REL_DIFF,
-              help='Threshold log likelihood relative difference.')
+              help='Threshold log likelihood relative difference. Default: %f.' % MIN_LOGLIK_REL_DIFF)
 @click.option('--max-loglik-effsize', type=int, default=MAX_LOGLIK_EFFSIZE,
-              help='Threshold log likelihood effective size difference.')
+              help='Threshold log likelihood effective size difference. Default: %d.' % MAX_LOGLIK_EFFSIZE)
 @click.option('--min-maxdiff', type=float, default=MIN_MAXDIFF,
-              help='Threshold maximum difference.')
+              help='Threshold maximum difference. Default: %f.' % MIN_MAXDIFF)
 @click.option('--check-freq', type=float, default=CHECK_FREQ,
-              help='How often to check the thresholds (in seconds).')
+              help='How often to check the thresholds (in seconds). Default: %f.' % CHECK_FREQ)
 @click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
 def cli(threads, alignments, chains, **thresholds):
