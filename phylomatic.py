@@ -40,6 +40,9 @@ MIN_LOGLIK_REL_DIFF = float(config['thresholds']['min_loglik_rel_diff'])
 MAX_LOGLIK_EFFSIZE = int(config['thresholds']['max_loglik_effsize'])
 MIN_MAXDIFF = float(config['thresholds']['min_maxdiff'])
 
+# Input file types
+INPUT_FILE_TYPES = config['input']['filetypes'].split(', ')
+
 # Output locations
 LOGFILE = 'alignments.log.csv'
 TREE_FILE_NAME = 'bpcomp.con.tre'
@@ -299,8 +302,18 @@ def cli(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
         # create a logfile
         create_logfile(out, chain_names)
 
+        alignment_files = []
+        for path in alignments:
+            if os.path.isfile(path):
+                alignment_files.append(path)
+            else:
+                for file in os.listdir(path):
+                    for file_type in INPUT_FILE_TYPES:
+                        if file.endswith(file_type):
+                            alignment_files.append(file)
+
         # sequentially process each alignment
-        for alignment in alignments:
+        for alignment in alignment_files:
             processes = []
             threads_per_chain = threads / chains
             alignment_file_name_without_extension = os.path.splitext(alignment)[0]
