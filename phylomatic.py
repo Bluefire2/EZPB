@@ -81,15 +81,34 @@ def discard_samples(chain_length):
     return min(chain_length / 10, MAX_GEN_DISCARD)
 
 
+# Container class for chain convergence test
+class Convergence(object):
+    def __init__(self, stop, converged, loglik_effsize, loglik_rel_diff, max_diff, generations):
+        self.stop = stop
+        self.converged = converged
+        self.loglik_effsize = loglik_effsize
+        self.loglik_rel_diff = loglik_rel_diff
+        self.max_diff = max_diff
+        self.generations = generations
+
+    def print_data(self):
+        for chain, gen in self.generations.items():
+            print('Generations for chain %s: %d' % (chain, gen))
+        print('Log likelihood effective size: %d' % self.loglik_effsize)
+        print('Log likelihood relative difference: %f' % self.loglik_rel_diff)
+        print('Max diff: %f' % self.max_diff)
+
+
 def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, min_maxdiff, **thresholds):
     if trace_file_len('%s.trace' % chains[0]) < MIN_CYCLES:
-        return True
+        return None
     else:
+        all_generations = {}
         above_max_gen = True
         g = 0
         for chain in chains:
             generations = trace_file_len('%s.trace' % chain)
-            print('Generations for chain %s: %d' % (chain, generations))
+            all_generations[chain] = generations
             g = generations
             above_max_gen = above_max_gen and (generations > max_gen)
 
@@ -100,9 +119,6 @@ def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, m
 
         # the results get written to a file
         loglik_effsize, loglik_rel_diff = data_from_tracecomp_file()
-        print('Log likelihood effective size: %d' % loglik_effsize)
-        print('Log likelihood relative difference: %f' % loglik_rel_diff)
-
         # have the thresholds been broken?
         loglik_effsize_broken = loglik_effsize > max_loglik_effsize
         loglik_rel_diff_broken = loglik_rel_diff < min_loglik_rel_diff
@@ -112,7 +128,6 @@ def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, m
 
         # once again the results are written to a file
         max_diff = data_from_bpcomp_file()
-        print('Max diff: %f' % max_diff)
 
         # have the thresholds been broken?
         max_diff_broken = max_diff < min_maxdiff
@@ -121,17 +136,25 @@ def check_thresholds(chains, max_gen, max_loglik_effsize, min_loglik_rel_diff, m
         #       % (max_loglik_effsize, min_loglik_rel_diff, min_maxdiff))
         # print('Broken: %d %d %d' % (loglik_effsize_broken, loglik_rel_diff_broken, max_diff_broken))
 
-        thresholds_broken = above_max_gen or (loglik_effsize_broken and loglik_rel_diff_broken and max_diff_broken)
-        return not thresholds_broken
+        converged = loglik_effsize_broken and loglik_rel_diff_broken and max_diff_broken
+        stop = above_max_gen or converged
+        return Convergence(stop, converged, loglik_effsize, loglik_rel_diff, max_diff, all_generations)
 
 
 async def check_thresholds_periodic(chains, callback, check_freq, **thresholds):
     while True:
-        if check_thresholds(chains, **thresholds):
+        result = check_thresholds(chains, **thresholds)
+        # None indicates that the minimum number of cycles has not yet been reached
+        if result is None or not result.stop:
+            if result is not None:
+                # print some data for the user
+                result.print_data()
+                print('')  # new line
+
             await asyncio.sleep(check_freq)
             continue
         else:
-            callback()
+            callback(result)
             break
 
 
