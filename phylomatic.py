@@ -11,42 +11,43 @@ import configparser
 import re
 import os
 from pkg_resources import Requirement, resource_filename
+from config import config_types
 
 
 devnull = open(os.devnull, 'w')  # so we can suppress the output of subprocesses
 
 CONFIG_FILE = resource_filename(Requirement.parse("phyl-o-matic"), "config.ini")
-config = configparser.ConfigParser()
-config.read(CONFIG_FILE)
+config_data = configparser.ConfigParser()
+config_data.read(CONFIG_FILE)
 
-CHECK_FREQ = float(config['default']['check_freq'])
+CHECK_FREQ = float(config_data['default']['check_freq'])
 
-MAX_GEN_DISCARD = int(config['generations']['max_discard'])
-MIN_CYCLES = int(config['generations']['min_cycles'])
+MAX_GEN_DISCARD = int(config_data['generations']['max_discard'])
+MIN_CYCLES = int(config_data['generations']['min_cycles'])
 
-TRACECOMP_OUT_FILE = config['output']['tracecomp']
-LOGLIK_LINE = int(config['output']['loglik_line'])
+TRACECOMP_OUT_FILE = config_data['output']['tracecomp']
+LOGLIK_LINE = int(config_data['output']['loglik_line'])
 
-BPCOMP_OUT_FILE = config['output']['bpcomp']
-MAX_DIFF_LINE = int(config['output']['max_diff_line'])
+BPCOMP_OUT_FILE = config_data['output']['bpcomp']
+MAX_DIFF_LINE = int(config_data['output']['max_diff_line'])
 
-TREE_SAMPLE_FREQ = int(config['default']['tree_sample_freq'])
+TREE_SAMPLE_FREQ = int(config_data['default']['tree_sample_freq'])
 
 N_THREADS = multiprocessing.cpu_count()
 
 # CLI defaults:
-MAX_GEN = int(config['thresholds']['max_gen'])
-MIN_LOGLIK_REL_DIFF = float(config['thresholds']['min_loglik_rel_diff'])
-MAX_LOGLIK_EFFSIZE = int(config['thresholds']['max_loglik_effsize'])
-MIN_MAXDIFF = float(config['thresholds']['min_maxdiff'])
+MAX_GEN = int(config_data['thresholds']['max_gen'])
+MIN_LOGLIK_REL_DIFF = float(config_data['thresholds']['min_loglik_rel_diff'])
+MAX_LOGLIK_EFFSIZE = int(config_data['thresholds']['max_loglik_effsize'])
+MIN_MAXDIFF = float(config_data['thresholds']['min_maxdiff'])
 
 # Input file types
-INPUT_FILE_TYPES = config['input']['filetypes'].split(', ')
+INPUT_FILE_TYPES = config_data['input']['filetypes'].split(', ')
 
 # Output locations
 LOGFILE = 'alignments.log.csv'
 TREE_FILE_NAME = 'bpcomp.con.tre'
-OUTPUT_DIRECTORY = config['output']['directory']
+OUTPUT_DIRECTORY = config_data['output']['directory']
 
 # Output file data
 CHAIN_FILE_TYPES = ['.chain', '.monitor', '.param', '.run', '.trace', '.treelist']
@@ -260,7 +261,20 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir):
     move_output_files(output_dir, tree_dir, alignment)
 
 
-@click.command()
+def apply_decorators(*decorators):
+    def decorator(fn):
+        for d in reversed(decorators):
+            fn = d(fn)
+        return fn
+    return decorator
+
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command()
 @click.option('--threads', type=int, default=N_THREADS,
               help='How many threads the process should run on. Default: %d.' % N_THREADS)
 @click.option('--max-gen', type=int, default=MAX_GEN,
@@ -279,7 +293,7 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir):
               help='The directory to store the output files in. Default: %s.' % OUTPUT_DIRECTORY)
 @click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
-def cli(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
+def run(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
     """
     ALIGNMENTS: the paths to the alignment files to process. The alignments will be processed sequentially, and not in
     parallel. To process in parallel, run several instances of this command, adjusting the number of threads
@@ -364,3 +378,29 @@ def cli(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
                 raise
 
             print('All alignment chains finished.')
+
+
+config_cmd_decorators = []
+for category, variables in config_data.items():
+    for variable, value in variables.items():
+        full_variable_name = '%s-of-%s' % (variable, category)
+        current_value = config_data[category][variable]
+        decorator = click.option(
+            '--%s' % full_variable_name,
+            type=config_types[category][variable],
+            default=None,
+            help='Set the configuration variable %s. Current value: %s.' % (full_variable_name, current_value)
+        )
+        config_cmd_decorators.append(decorator)
+
+
+@cli.command()
+@apply_decorators(*config_cmd_decorators)
+def config(**config_variables):
+    for var, val in config_variables.items():
+        if val is not None:
+            name, cat = var.split('_of_')
+            config_data[cat][name] = val
+
+    with open(CONFIG_FILE, 'w') as configfile:
+        config_data.write(configfile)
