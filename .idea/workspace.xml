@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="75f657f9-36c0-4e4d-8fce-a31b9405db9b" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/phylomatic.py" beforeDir="false" afterPath="$PROJECT_DIR$/phylomatic.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +20,11 @@
           <file leaf-file-name="phylomatic.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/phylomatic.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="45">
-                  <caret line="3" column="14" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
+                <state relative-caret-position="448">
+                  <caret line="208" column="13" selection-start-line="208" selection-start-column="13" selection-end-line="208" selection-end-column="13" />
+                  <folding>
+                    <element signature="e#0#12#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -45,7 +50,7 @@
           <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/.gitignore">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="900">
+                <state relative-caret-position="1755">
                   <caret line="117" column="18" selection-start-line="117" selection-start-column="18" selection-end-line="117" selection-end-column="18" />
                 </state>
               </provider>
@@ -55,11 +60,23 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="config.ini" pinned="false" current-in-tab="true">
+          <file leaf-file-name="config.ini" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/config.ini">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="300">
                   <caret line="20" selection-start-line="20" selection-end-line="20" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/README.md">
+              <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+                <state split_layout="SPLIT">
+                  <first_editor relative-caret-position="555">
+                    <caret line="10" column="545" lean-forward="true" selection-start-line="10" selection-start-column="545" selection-end-line="10" selection-end-column="545" />
+                  </first_editor>
+                  <second_editor />
                 </state>
               </provider>
             </entry>
@@ -90,6 +107,7 @@
       <find>print</find>
       <find>output</find>
       <find>LOGFILE</find>
+      <find>terminated_</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -111,6 +129,7 @@
         <option value="$PROJECT_DIR$/config.ini" />
         <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/phylomatic.py" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -226,6 +245,51 @@
     <entry file="file://$PROJECT_DIR$/phylomatic.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
+          <caret line="3" column="14" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="24" selection-start-line="20" selection-start-column="24" selection-end-line="20" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="21" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1755">
+          <caret line="117" column="18" selection-start-line="117" selection-start-column="18" selection-end-line="117" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bpcomp.bpdiff">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="22" selection-start-line="2" selection-start-column="22" selection-end-line="2" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phylomatic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
           <caret line="14" column="29" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="29" />
         </state>
       </provider>
@@ -237,9 +301,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/alignments.log.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/alignments.log.csv" />
     <entry file="file://$PROJECT_DIR$/config.ini">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -348,14 +410,10 @@
     <entry file="file://$PROJECT_DIR$/test_alignment_2.phy">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/bpcomp.con.tre">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/bpcomp.con.tre" />
     <entry file="file://$PROJECT_DIR$/alignments.log" />
     <entry file="file://$PROJECT_DIR$/alignments.conv.log" />
-    <entry file="file://$PROJECT_DIR$/test_alignment_chain_1.trace">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/test_alignment_chain_1.trace" />
     <entry file="file://$PROJECT_DIR$/tracecomp.contdiff">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
@@ -363,23 +421,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/alignments.log.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="81" selection-start-column="81" selection-end-column="81" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/alignments.log.csv" />
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="900">
+        <state relative-caret-position="1755">
           <caret line="117" column="18" selection-start-line="117" selection-start-column="18" selection-end-line="117" selection-end-column="18" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/alignments.log.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/test/alignments.log.csv" />
     <entry file="file://$PROJECT_DIR$/Phyl_o_Matic.egg-info/top_level.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -398,9 +448,7 @@
     <entry file="file://$PROJECT_DIR$/Phyl_o_Matic.egg-info/SOURCES.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/abcdef/alignments.log.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/test/abcdef/alignments.log.csv" />
     <entry file="file://$PROJECT_DIR$/bpcomp.bpdiff">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -434,8 +482,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/phylomatic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="14" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
+        <state relative-caret-position="448">
+          <caret line="208" column="13" selection-start-line="208" selection-start-column="13" selection-end-line="208" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="555">
+            <caret line="10" column="545" lean-forward="true" selection-start-line="10" selection-start-column="545" selection-end-line="10" selection-end-column="545" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>

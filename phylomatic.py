@@ -363,7 +363,7 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
                 # Upon an exception:
                 # 1. Stop all chains
                 # 2. Move all chain output files to output/analyses
-                # 3. Move output tree file to output/terminated_trees
+                # 3. Move output tree file to output/incomplete_trees
 
                 # Step 1:
                 print('Exception raised, terminating all chains...')
@@ -371,7 +371,7 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
 
                 # Steps 2 & 3:
                 print('Saving output files...')
-                tree_dir = os.path.join(out, 'terminated_trees')
+                tree_dir = os.path.join(out, 'incomplete_trees')
                 move_output_files(out, tree_dir, alignment)
                 raise
 
