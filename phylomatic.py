@@ -2,8 +2,6 @@ import click
 import multiprocessing
 import subprocess
 import asyncio
-from contextlib import suppress
-import time
 import shlex
 import sys
 from functools import reduce, partial
