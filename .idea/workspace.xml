@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="75f657f9-36c0-4e4d-8fce-a31b9405db9b" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/phylomatic.py" beforeDir="false" afterPath="$PROJECT_DIR$/phylomatic.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +19,8 @@
           <file leaf-file-name="phylomatic.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/phylomatic.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="219">
-                  <caret line="286" column="113" selection-start-line="286" selection-start-column="113" selection-end-line="286" selection-end-column="113" />
+                <state relative-caret-position="39">
+                  <caret line="207" lean-forward="true" selection-start-line="207" selection-end-line="207" />
                   <folding>
                     <element signature="e#0#12#0" expanded="true" />
                   </folding>
@@ -53,7 +54,7 @@
             <entry file="file://$PROJECT_DIR$/config.ini">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="330">
-                  <caret line="22" column="16" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="16" />
+                  <caret line="22" column="33" selection-start-line="22" selection-start-column="33" selection-end-line="22" selection-end-column="33" />
                 </state>
               </provider>
             </entry>
@@ -62,7 +63,7 @@
             <entry file="file://$PROJECT_DIR$/bpcomp.bpdiff">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="30">
-                  <caret line="2" column="24" selection-start-line="2" selection-start-column="24" selection-end-line="2" selection-end-column="24" />
+                  <caret line="2" column="22" selection-start-line="2" selection-start-column="22" selection-end-line="2" selection-end-column="22" />
                 </state>
               </provider>
             </entry>
@@ -138,7 +139,13 @@
             <path>
               <item name="phyl-o-matic" type="b2602c69:ProjectViewProjectNode" />
               <item name="phyl-o-matic" type="462c0819:PsiDirectoryNode" />
-              <item name="Phyl_o_Matic.egg-info" type="462c0819:PsiDirectoryNode" />
+              <item name="phylomatic" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="phyl-o-matic" type="b2602c69:ProjectViewProjectNode" />
+              <item name="phyl-o-matic" type="462c0819:PsiDirectoryNode" />
+              <item name="phylomatic" type="462c0819:PsiDirectoryNode" />
+              <item name="terminated_trees" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -421,7 +428,7 @@
     <entry file="file://$PROJECT_DIR$/bpcomp.bpdiff">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
-          <caret line="2" column="24" selection-start-line="2" selection-start-column="24" selection-end-line="2" selection-end-column="24" />
+          <caret line="2" column="22" selection-start-line="2" selection-start-column="22" selection-end-line="2" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -431,14 +438,14 @@
     <entry file="file://$PROJECT_DIR$/config.ini">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
-          <caret line="22" column="16" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="16" />
+          <caret line="22" column="33" selection-start-line="22" selection-start-column="33" selection-end-line="22" selection-end-column="33" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/phylomatic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="286" column="113" selection-start-line="286" selection-start-column="113" selection-end-line="286" selection-end-column="113" />
+        <state relative-caret-position="39">
+          <caret line="207" lean-forward="true" selection-start-line="207" selection-end-line="207" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>

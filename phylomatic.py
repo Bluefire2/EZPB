@@ -212,6 +212,28 @@ def terminate_all_processes(processes):
         process.terminate()
 
 
+def move_output_files(output_dir, tree_dir, alignment):
+    # Create output directory, and subdirectories: analyses, good_trees, bad_trees
+    analyses_dir = os.path.join(output_dir, 'analyses', alignment)
+
+    if not os.path.exists(analyses_dir):
+        os.makedirs(analyses_dir)
+
+    if not os.path.exists(tree_dir):
+        os.makedirs(tree_dir)
+
+    # Move chain files into output/analyses/[alignment]: .chain, .monitor, .param, .run, .trace, .treelist
+    for file_type in CHAIN_FILE_TYPES:
+        for file in os.listdir('.'):
+            if file.endswith(file_type):
+                current_path = os.path.join('.', file)
+                new_path = os.path.join(analyses_dir, file)
+                os.rename(current_path, new_path)
+
+    # Move and rename output tree file
+    os.rename(TREE_FILE_NAME, os.path.join(tree_dir, new_tree_file_name(alignment)))
+
+
 # This is the function that is called when the threshold check fails
 def check_fail_callback(convergence, alignment, chains, processes, output_dir):
     # Stop all chain runs
@@ -226,36 +248,16 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir):
     log_data = [alignment] + convergence.as_list() + generations_list
     add_row_to_logfile(output_dir, *log_data)
 
-    # Create output directory, and subdirectories: analyses, good_trees, bad_trees
-    analyses_dir = os.path.join(output_dir, 'analyses', alignment)
-    good_trees_dir = os.path.join(output_dir, 'good_trees')
-    bad_trees_dir = os.path.join(output_dir, 'bad_trees')
+    # Now we need to move the output files to the correct directories
 
-    if not os.path.exists(analyses_dir):
-        os.makedirs(analyses_dir)
-
-    if not os.path.exists(good_trees_dir):
-        os.makedirs(good_trees_dir)
-
-    if not os.path.exists(bad_trees_dir):
-        os.makedirs(bad_trees_dir)
-
-    # Move chain files into output/analyses/[alignment]: .chain, .monitor, .param, .run, .trace, .treelist
-    # Move chain files into output/analyses/[alignment]: .chain, .monitor, .param, .run, .trace, .treelist
-    for file_type in CHAIN_FILE_TYPES:
-        for file in os.listdir('.'):
-            if file.endswith(file_type):
-                current_path = os.path.join('.', file)
-                new_path = os.path.join(analyses_dir, file)
-                os.rename(current_path, new_path)
-
-    # If the chains converged, move bpcomp.con.tre to good_trees, otherwise move it to bad_trees
+    # If the chains converged, move the output tree file to good_trees, otherwise move it to bad_trees
     # Also, rename it to [alignment].tre
     if convergence.converged:
-        directory = good_trees_dir
+        tree_dir = os.path.join(output_dir, 'good_trees')
     else:
-        directory = bad_trees_dir
-    os.rename(TREE_FILE_NAME, os.path.join(directory, new_tree_file_name(alignment)))
+        tree_dir = os.path.join(output_dir, 'bad_trees')
+
+    move_output_files(output_dir, tree_dir, alignment)
 
 
 @click.command()
@@ -299,7 +301,6 @@ def cli(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
         # generate some chain names
         chain_names = [('chain_%d' % (j + 1)) for j in range(chains)]
         print('Chains: %s' % ', '.join(chain_names))
-
         # create the output directory
         os.mkdir(out)
         # create a logfile
@@ -347,8 +348,19 @@ def cli(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
 
                 print('Alignment %s chains finished processing.' % alignment_file_name_without_extension)
             except BaseException:  # so that it catches KeyboardInterrupts
+                # Upon an exception:
+                # 1. Stop all chains
+                # 2. Move all chain output files to output/analyses
+                # 3. Move output tree file to output/terminated_trees
+
+                # Step 1:
                 print('Exception raised, terminating all chains...')
                 terminate_all_processes(processes)
+
+                # Steps 2 & 3:
+                print('Saving output files...')
+                tree_dir = os.path.join(out, 'terminated_trees')
+                move_output_files(out, tree_dir, alignment)
                 raise
 
             print('All alignment chains finished.')
