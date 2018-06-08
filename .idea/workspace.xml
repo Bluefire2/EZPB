@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="75f657f9-36c0-4e4d-8fce-a31b9405db9b" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/phylomatic.py" beforeDir="false" afterPath="$PROJECT_DIR$/phylomatic.py" afterDir="false" />
     </list>
@@ -20,8 +19,8 @@
           <file leaf-file-name="phylomatic.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/phylomatic.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="448">
-                  <caret line="208" column="13" selection-start-line="208" selection-start-column="13" selection-end-line="208" selection-end-column="13" />
+                <state relative-caret-position="834">
+                  <caret line="552" column="101" selection-start-line="552" selection-start-column="101" selection-end-line="552" selection-end-column="101" />
                   <folding>
                     <element signature="e#0#12#0" expanded="true" />
                   </folding>
@@ -73,8 +72,8 @@
             <entry file="file://$PROJECT_DIR$/README.md">
               <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
                 <state split_layout="SPLIT">
-                  <first_editor relative-caret-position="555">
-                    <caret line="10" column="545" lean-forward="true" selection-start-line="10" selection-start-column="545" selection-end-line="10" selection-end-column="545" />
+                  <first_editor relative-caret-position="570">
+                    <caret line="20" column="41" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
                   </first_editor>
                   <second_editor />
                 </state>
@@ -108,6 +107,9 @@
       <find>output</find>
       <find>LOGFILE</find>
       <find>terminated_</find>
+      <find>the names of the</find>
+      <find>output_dir</find>
+      <find>decorator</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -128,8 +130,8 @@
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/config.ini" />
         <option value="$PROJECT_DIR$/config.py" />
-        <option value="$PROJECT_DIR$/phylomatic.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/phylomatic.py" />
       </list>
     </option>
   </component>
@@ -201,6 +203,14 @@
       <option name="presentableId" value="Default" />
       <updated>1528122956430</updated>
     </task>
+    <task id="LOCAL-00001" summary="Add installation instructions">
+      <created>1528471712013</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1528471712013</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -235,6 +245,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add installation instructions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add installation instructions" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -480,23 +494,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/phylomatic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="208" column="13" selection-start-line="208" selection-start-column="13" selection-end-line="208" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="555">
-            <caret line="10" column="545" lean-forward="true" selection-start-line="10" selection-start-column="545" selection-end-line="10" selection-end-column="545" />
+          <first_editor relative-caret-position="570">
+            <caret line="20" column="41" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/phylomatic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="834">
+          <caret line="552" column="101" selection-start-line="552" selection-start-column="101" selection-end-line="552" selection-end-column="101" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

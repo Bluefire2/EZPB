@@ -3,17 +3,24 @@
 
 This package allows you to run multiple chains on a series of alignment files, sequentially. What this means is that the alignment files are queued up, and as soon as one has finished processing, the next alignment chains start running.
 
-Of course, technically no chain is ever "finished": if left alone, it will run forever. This is the core of Phyl-o-matic: it detects if and when a set of chains converges and stops them, starting the next set.
+Of course, technically no chain is ever "finished": if left alone, it will run forever. This is the core of Phyl-o-matic: it automatically detects if and when a set of chains converges and stops them, starting the next set.
 
 Convergence criteria are based on the log likelihood effective size, the relative difference in log likelihood, and the maximum difference. Once all of the criteria are satisfied, Phyl-o-matic stops the chains. If the chains get to a certain length (the maximum number of generations) without converging, Phyl-o-matic also stops them, in order to prevent any set of chains from running for too long. All of these thresholds can be configured.
 
-## Output
-The default output directory is `phylomatic`. `phylomatic/analyses` will contain a directory for each alignment file, each in turn containing its generated chain files. `phylomatic/good_trees` will contain trees that converged, and `phylomatic_bad_trees` will contain trees that did not (i.e. trees whose chains exceeded the maximum number of generations without converging). Performing a keyboard interrupt (`Ctrl + C`) at any time will stop all currently running chains, and place the currently generated tree in `phylomatic/incomplete_trees`.
+## Installation
+
+1. Make sure that you have Python 3.6+ installed on your machine. If you have multiple versions, you can [create a virtual environment](https://conda.io/docs/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) with the correct version.
+2. Clone the repository using `git`.
+3. `cd` into the root directory of the code and run `pip install -e .`.
+4. Add the directory to your PATH environment variable. This can be done by adding the following line to your `.bashrc` file: `export PATH="/home/path/to/the/directory:$PATH"
+`.
+
+The last step is not strictly necessary, but it allows you to use the command line interface in any directory, not just the one that the code is in.
 
 ## Command line interface
 There are two base commands: run and config.
 
-### run
+## run
 This command runs a set of chains on one or more alignments.
 
 ##### Usage
@@ -27,7 +34,10 @@ CHAINS: the number of the chains to run in parallel. Threads will be shared even
 
 OPTIONS: the options allow the user to temporarily set variables such as convergence thresholds and the output directory. Alternatively, these can be permanently set with the `config` command. For a detailed list of options and what they do, run `phylomatic run --help`.
 
-### config
+##### Output
+The default output directory is `phylomatic`. `phylomatic/analyses` will contain a directory for each alignment file, each in turn containing its generated chain files. `phylomatic/good_trees` will contain trees that converged, and `phylomatic_bad_trees` will contain trees that did not (i.e. trees whose chains exceeded the maximum number of generations without converging). Performing a keyboard interrupt (`Ctrl + C`) at any time will stop all currently running chains, and place the currently generated tree in `phylomatic/incomplete_trees`.
+
+## config
 This command permanently sets one or more configuration variables.
 
 Alternatively configuration variables can be changed manually by editing `config.ini`.
