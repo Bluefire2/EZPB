@@ -18,8 +18,7 @@ config_types = {
         'loglik_line': int,
         'bpcomp': str,
         'max_diff_line': int,
-        'directory': str,
-        'save_good_tree_runs': bool
+        'directory': str
     },
     'input': {
         'filetypes': str

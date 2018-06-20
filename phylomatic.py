@@ -32,9 +32,6 @@ LOGLIK_LINE = int(config_data['output']['loglik_line'])
 BPCOMP_OUT_FILE = config_data['output']['bpcomp']
 MAX_DIFF_LINE = int(config_data['output']['max_diff_line'])
 
-# need to convert to int first, otherwise it always parses as True
-SAVE_GOOD_TREE_RUNS = bool(int(config_data['output']['save_good_tree_runs']))
-
 TREE_SAMPLE_FREQ = int(config_data['default']['tree_sample_freq'])
 
 
@@ -477,8 +474,7 @@ def cli():
 @click.option('--out', type=str, default=OUTPUT_DIRECTORY,
               help='The directory to store the output files in. Default: %s.' % OUTPUT_DIRECTORY)
 @click.option('--save-good-tree-runs', is_flag=True,
-              help='Save the run files for good trees as well as bad trees. If disabled, '
-                   'only bad tree runs are saved. Default: %s.' % SAVE_GOOD_TREE_RUNS)
+              help='Save the run files for good trees as well as bad trees. If disabled, only bad tree runs are saved.')
 @click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
 def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree_runs, **thresholds):
@@ -493,6 +489,7 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
     CHAINS: the number of the chains to run in parallel. Threads will be shared evenly among the chains. The number of
     chains must be at least two, but cannot be greater than the number of threads allocated.
     """
+    click.echo(save_good_tree_runs)
     if chains < 2:
         print('Error: Must specify at least two chains.')
         sys.exit(1)
