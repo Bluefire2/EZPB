@@ -357,7 +357,7 @@ def terminate_all_processes(processes):
         process.terminate()
 
 
-def move_output_files(output_dir, tree_dir, alignment):
+def move_output_files(output_dir, tree_dir, alignment, save_run):
     """
     After the chains have finished running, move the chain output files and the generated tree file to their places in
     the output directory.
@@ -375,22 +375,29 @@ def move_output_files(output_dir, tree_dir, alignment):
     if not os.path.exists(analyses_dir):
         os.makedirs(analyses_dir)
 
-    if not os.path.exists(tree_dir):
-        os.makedirs(tree_dir)
+    if save_run:
+        if not os.path.exists(tree_dir):
+            os.makedirs(tree_dir)
 
-    # Move chain files into output/analyses/[alignment]: .chain, .monitor, .param, .run, .trace, .treelist
-    for file_type in CHAIN_FILE_TYPES:
-        for file in os.listdir('.'):
-            if file.endswith(file_type):
-                current_path = os.path.join('.', file)
-                new_path = os.path.join(analyses_dir, file)
-                os.rename(current_path, new_path)
+        # Move chain files into output/analyses/[alignment]: .chain, .monitor, .param, .run, .trace, .treelist
+        for file_type in CHAIN_FILE_TYPES:
+            for file in os.listdir('.'):
+                if file.endswith(file_type):
+                    current_path = os.path.join('.', file)
+                    new_path = os.path.join(analyses_dir, file)
+                    os.rename(current_path, new_path)
+    else:
+        # delete all run files
+        for file_type in CHAIN_FILE_TYPES:
+            for file in os.listdir('.'):
+                if file.endswith(file_type):
+                    os.remove(file)
 
     # Move and rename output tree file
     os.rename(TREE_FILE_NAME, os.path.join(tree_dir, new_tree_file_name(alignment)))
 
 
-def check_fail_callback(convergence, alignment, chains, processes, output_dir):
+def check_fail_callback(convergence, alignment, chains, processes, output_dir, save_good_tree_runs):
     """
     This is the function that is called when the threshold check fails. All but the first arguments are intended to be
     bound to the function using [functools.partial] to create a callback that fits the specification outlined in
@@ -418,12 +425,17 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir):
 
     # If the chains converged, move the output tree file to good_trees, otherwise move it to bad_trees
     # Also, rename it to [alignment].tre
+    save_run = True
     if convergence.converged:
+        # do we save the runs?
+        if not save_good_tree_runs:
+            save_run = False
         tree_dir = os.path.join(output_dir, 'good_trees')
     else:
+        save_run = True
         tree_dir = os.path.join(output_dir, 'bad_trees')
 
-    move_output_files(output_dir, tree_dir, alignment)
+    move_output_files(output_dir, tree_dir, alignment, save_run)
 
 
 def apply_decorators(*decorators):
@@ -461,9 +473,11 @@ def cli():
               help='How many generations to ignore before checking for convergence. Default: %d.' % MIN_CYCLES)
 @click.option('--out', type=str, default=OUTPUT_DIRECTORY,
               help='The directory to store the output files in. Default: %s.' % OUTPUT_DIRECTORY)
+@click.option('--save-good-tree-runs', is_flag=True,
+              help='Save the run files for good trees as well as bad trees. If disabled, only bad tree runs are saved.')
 @click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
-def run(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
+def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree_runs, **thresholds):
     """
     ALIGNMENTS: the paths to the alignment files to process. The alignments will be processed sequentially, and not in
     parallel. To process in parallel, run several instances of this command, adjusting the number of threads
@@ -475,6 +489,7 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
     CHAINS: the number of the chains to run in parallel. Threads will be shared evenly among the chains. The number of
     chains must be at least two, but cannot be greater than the number of threads allocated.
     """
+    click.echo(save_good_tree_runs)
     if chains < 2:
         print('Error: Must specify at least two chains.')
         sys.exit(1)
@@ -544,7 +559,9 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, **thresholds):
                 # Steps 2 & 3:
                 print('Saving output files...')
                 tree_dir = os.path.join(out, 'incomplete_trees')
-                move_output_files(out, tree_dir, alignment)
+
+                # Save runs because the tree is incomplete
+                move_output_files(out, tree_dir, alignment, True)
                 raise
 
             print('All alignment chains finished.')
