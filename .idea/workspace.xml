@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="75f657f9-36c0-4e4d-8fce-a31b9405db9b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/phylomatic.py" beforeDir="false" afterPath="$PROJECT_DIR$/phylomatic.py" afterDir="false" />
-    </list>
+    <list default="true" id="75f657f9-36c0-4e4d-8fce-a31b9405db9b" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,8 +16,8 @@
           <file leaf-file-name="phylomatic.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/phylomatic.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="834">
-                  <caret line="552" column="101" selection-start-line="552" selection-start-column="101" selection-end-line="552" selection-end-column="101" />
+                <state relative-caret-position="537">
+                  <caret line="351" column="23" lean-forward="true" selection-start-line="351" selection-start-column="23" selection-end-line="351" selection-end-column="23" />
                   <folding>
                     <element signature="e#0#12#0" expanded="true" />
                   </folding>
@@ -210,7 +207,14 @@
       <option name="project" value="LOCAL" />
       <updated>1528471712013</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add a docstring to each function">
+      <created>1528475302000</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1528475302000</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -248,7 +252,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add installation instructions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add installation instructions" />
+    <MESSAGE value="Add a docstring to each function" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add a docstring to each function" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -506,8 +511,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/phylomatic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="834">
-          <caret line="552" column="101" selection-start-line="552" selection-start-column="101" selection-end-line="552" selection-end-column="101" />
+        <state relative-caret-position="537">
+          <caret line="351" column="23" lean-forward="true" selection-start-line="351" selection-start-column="23" selection-end-line="351" selection-end-column="23" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
