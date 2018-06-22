@@ -8,6 +8,7 @@ from functools import reduce, partial
 import configparser
 import re
 import os
+import csv
 from pkg_resources import Requirement, resource_filename
 from config import config_types
 
@@ -528,6 +529,21 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
 
         # sequentially process each alignment
         for alignment in alignment_files:
+            # first, check to see if it's already been done
+            # we can do this by checking the logfile
+            skip_alignment = False
+            if output_dir_exists:
+                with open(os.path.join(out, LOGFILE)) as csv_fp:
+                    reader = csv.DictReader(csv_fp)
+                    for row in reader:
+                        if alignment == row['alignment']:
+                            # the alignment is in the logfile, therefore it has already been run
+                            skip_alignment = True
+
+            if skip_alignment:
+                click.echo('Skipping alignment %s.' % alignment)
+                continue
+
             processes = []
             threads_per_chain = threads / chains
 
