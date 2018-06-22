@@ -519,10 +519,9 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
         for alignment in alignment_files:
             processes = []
             threads_per_chain = threads / chains
-            alignment_file_name_without_extension = os.path.splitext(alignment)[0]
 
             # generate specific chain file names
-            chain_full_names = [chain_full_name(alignment_file_name_without_extension, chain_name)
+            chain_full_names = [chain_full_name(alignment, chain_name)
                                 for chain_name in chain_names]
 
             try:
@@ -534,7 +533,7 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
                     processes.append(process)
 
                 callback = partial(check_fail_callback,
-                                   alignment=alignment_file_name_without_extension,
+                                   alignment=alignment,
                                    chains=chain_names,
                                    processes=processes,
                                    output_dir=out)
@@ -543,9 +542,9 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
                 # processed until this one is done:
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(check_thresholds_periodic(
-                    alignment_file_name_without_extension, chain_names, callback, check_freq, min_cycles, **thresholds))
+                    alignment, chain_names, callback, check_freq, min_cycles, **thresholds))
 
-                print('Alignment %s chains finished processing.' % alignment_file_name_without_extension)
+                print('Alignment %s chains finished processing.' % alignment)
             except BaseException:  # so that it catches KeyboardInterrupts
                 # Upon an exception:
                 # 1. Stop all chains
