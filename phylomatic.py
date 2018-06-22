@@ -8,6 +8,7 @@ from functools import reduce, partial
 import configparser
 import re
 import os
+import csv
 from pkg_resources import Requirement, resource_filename
 from config import config_types
 
@@ -435,7 +436,11 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir, s
         save_run = True
         tree_dir = os.path.join(output_dir, 'bad_trees')
 
-    move_output_files(output_dir, tree_dir, alignment, save_run)
+    move_output_files(
+        output_dir=output_dir,
+        tree_dir=tree_dir,
+        alignment=alignment,
+        save_run=save_run)
 
 
 def apply_decorators(*decorators):
@@ -500,10 +505,17 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
         # generate some chain names
         chain_names = [('chain_%d' % (j + 1)) for j in range(chains)]
         print('Chains: %s' % ', '.join(chain_names))
-        # create the output directory
-        os.mkdir(out)
-        # create a logfile
-        create_logfile(out, chain_names)
+
+        # merge into the output directory if it exists
+        # if output directory does not exist, create it
+        # merging into the logfile happens "for free", i.e. there is no extra code required
+        output_dir_exists = os.path.exists(out)
+
+        if not output_dir_exists:
+            # create the output directory
+            os.mkdir(out)
+            # create a logfile
+            create_logfile(out, chain_names)
 
         alignment_files = []
         for path in alignments:
@@ -517,12 +529,26 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
 
         # sequentially process each alignment
         for alignment in alignment_files:
+            # first, check to see if it's already been done
+            # we can do this by checking the logfile
+            skip_alignment = False
+            if output_dir_exists:
+                with open(os.path.join(out, LOGFILE)) as csv_fp:
+                    reader = csv.DictReader(csv_fp)
+                    for row in reader:
+                        if alignment == row['alignment']:
+                            # the alignment is in the logfile, therefore it has already been run
+                            skip_alignment = True
+
+            if skip_alignment:
+                click.echo('Skipping alignment %s.' % alignment)
+                continue
+
             processes = []
             threads_per_chain = threads / chains
-            alignment_file_name_without_extension = os.path.splitext(alignment)[0]
 
             # generate specific chain file names
-            chain_full_names = [chain_full_name(alignment_file_name_without_extension, chain_name)
+            chain_full_names = [chain_full_name(alignment, chain_name)
                                 for chain_name in chain_names]
 
             try:
@@ -534,18 +560,19 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
                     processes.append(process)
 
                 callback = partial(check_fail_callback,
-                                   alignment=alignment_file_name_without_extension,
+                                   alignment=alignment,
                                    chains=chain_names,
                                    processes=processes,
-                                   output_dir=out)
+                                   output_dir=out,
+                                   save_good_tree_runs=save_good_tree_runs)
 
                 # This event loop blocks execution until it's done, thus preventing the next alignment from being
                 # processed until this one is done:
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(check_thresholds_periodic(
-                    alignment_file_name_without_extension, chain_names, callback, check_freq, min_cycles, **thresholds))
+                    alignment, chain_names, callback, check_freq, min_cycles, **thresholds))
 
-                print('Alignment %s chains finished processing.' % alignment_file_name_without_extension)
+                print('Alignment %s chains finished processing.' % alignment)
             except BaseException:  # so that it catches KeyboardInterrupts
                 # Upon an exception:
                 # 1. Stop all chains
@@ -561,7 +588,11 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
                 tree_dir = os.path.join(out, 'incomplete_trees')
 
                 # Save runs because the tree is incomplete
-                move_output_files(out, tree_dir, alignment, True)
+                move_output_files(
+                    output_dir=out,
+                    tree_dir=tree_dir,
+                    alignment=alignment,
+                    save_run=True)
                 raise
 
             print('All alignment chains finished.')
