@@ -365,6 +365,7 @@ def move_output_files(output_dir, tree_dir, alignment, save_run):
     :param output_dir: The path to the output directory.
     :param tree_dir: The directory to move the tree file to.
     :param alignment: The name of the alignment.
+    :param save_run: True if the output chain files from this run are to be kept, False if they are to be deleted.
 
     Preconditions:
         - the [run] command must have been executed prior to calling this function.
@@ -408,7 +409,8 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir, s
     :param chains: A list of the names of the chains being run.
     :param processes: A list of the [mpirun] processes running the chains.
     :param output_dir: The output directory (where the output files are being moved to).
-    :param save_good_tree_runs: True if good tree run output files are to be kept, False if they are to be deleted.
+    :param save_good_tree_runs: True if output chain files from good trees are to be kept, False if they are to be
+    deleted.
     """
     # Stop all chain runs
     terminate_all_processes(processes)
