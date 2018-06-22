@@ -408,6 +408,7 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir, s
     :param chains: A list of the names of the chains being run.
     :param processes: A list of the [mpirun] processes running the chains.
     :param output_dir: The output directory (where the output files are being moved to).
+    :param save_good_tree_runs: True if good tree run output files are to be kept, False if they are to be deleted.
     """
     # Stop all chain runs
     terminate_all_processes(processes)
