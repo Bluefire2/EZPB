@@ -435,7 +435,11 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir, s
         save_run = True
         tree_dir = os.path.join(output_dir, 'bad_trees')
 
-    move_output_files(output_dir, tree_dir, alignment, save_run)
+    move_output_files(
+        output_dir=output_dir,
+        tree_dir=tree_dir,
+        alignment=alignment,
+        save_run=save_run)
 
 
 def apply_decorators(*decorators):
@@ -561,7 +565,11 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
                 tree_dir = os.path.join(out, 'incomplete_trees')
 
                 # Save runs because the tree is incomplete
-                move_output_files(out, tree_dir, alignment, True)
+                move_output_files(
+                    output_dir=out,
+                    tree_dir=tree_dir,
+                    alignment=alignment,
+                    save_run=True)
                 raise
 
             print('All alignment chains finished.')
