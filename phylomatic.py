@@ -504,10 +504,17 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
         # generate some chain names
         chain_names = [('chain_%d' % (j + 1)) for j in range(chains)]
         print('Chains: %s' % ', '.join(chain_names))
-        # create the output directory
-        os.mkdir(out)
-        # create a logfile
-        create_logfile(out, chain_names)
+
+        # merge into the output directory if it exists
+        # if output directory does not exist, create it
+        # merging into the logfile happens "for free", i.e. there is no extra code required
+        output_dir_exists = os.path.exists(out)
+
+        if not output_dir_exists:
+            # create the output directory
+            os.mkdir(out)
+            # create a logfile
+            create_logfile(out, chain_names)
 
         alignment_files = []
         for path in alignments:
