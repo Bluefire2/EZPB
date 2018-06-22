@@ -536,7 +536,8 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
                                    alignment=alignment,
                                    chains=chain_names,
                                    processes=processes,
-                                   output_dir=out)
+                                   output_dir=out,
+                                   save_good_tree_runs=save_good_tree_runs)
 
                 # This event loop blocks execution until it's done, thus preventing the next alignment from being
                 # processed until this one is done:
