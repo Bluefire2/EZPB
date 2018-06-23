@@ -124,3 +124,7 @@ phylomatic
 
 # output logs
 *.log.csv
+
+# .idea stuff to avoid constant merge conflicts
+.idea/inspectionProfiles/
+.idea/workspace.xml
