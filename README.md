@@ -30,12 +30,12 @@ ALIGNMENTS: the paths to the alignment files to process. The alignments will be 
 
 Alternatively, any path can be to a directory. In that case, all files of an alignment file type in the directory will be processed sequentially. The file types that the command accepts can be set in the configuration settings.
 
-CHAINS: the number of the chains to run in parallel. Threads will be shared evenly among the chains. The number of chains must be at least two, but cannot be greater than the number of threads allocated.
+CHAINS: the number of the chains to run in parallel. Allocated threads will be shared evenly among the chains. The number of chains must be at least two, but cannot be greater than the number of threads allocated.
 
 OPTIONS: the options allow the user to temporarily set variables such as convergence thresholds and the output directory. Alternatively, these can be permanently set with the `config` command. For a detailed list of options and what they do, run `phylomatic run --help`.
 
 ##### Output
-The default output directory is `phylomatic`. `phylomatic/analyses` will contain a directory for each alignment file, each in turn containing its generated chain files. `phylomatic/good_trees` will contain trees that converged, and `phylomatic_bad_trees` will contain trees that did not (i.e. trees whose chains exceeded the maximum number of generations without converging). Performing a keyboard interrupt (`Ctrl + C`) at any time will stop all currently running chains, and place the currently generated tree in `phylomatic/incomplete_trees`.
+The default output directory is `phylomatic`. `phylomatic/analyses` will contain a directory for each alignment file, each in turn containing its generated chain files. `phylomatic/good_trees` will contain trees that converged, and `phylomatic/bad_trees` will contain trees that did not (i.e. trees whose chains exceeded the maximum number of generations without converging). Performing a keyboard interrupt (`Ctrl + C`) at any time will stop all currently running chains, and place the currently generated tree in `phylomatic/incomplete_trees`.
 
 ## config
 This command permanently sets one or more configuration variables.
