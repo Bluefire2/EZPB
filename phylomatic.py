@@ -497,7 +497,6 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
     CHAINS: the number of the chains to run in parallel. Threads will be shared evenly among the chains. The number of
     chains must be at least two, but cannot be greater than the number of threads allocated.
     """
-    click.echo(save_good_tree_runs)
     if chains < 2:
         print('Error: Must specify at least two chains.')
         sys.exit(1)
