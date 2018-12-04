@@ -63,7 +63,8 @@ OUTPUT_DIRECTORY = config_data['output']['directory']
 # Output file data
 # These are the chain file types that the [run] command will move to the [analyses] directory when a chain has been
 # terminated
-CHAIN_FILE_TYPES = ['.chain', '.monitor', '.param', '.run', '.trace', '.treelist']
+KEEP_CHAIN_FILE_TYPES = ['.monitor', '.param', '.run', '.trace', '.treelist']
+ALL_CHAIN_FILE_TYPES = KEEP_CHAIN_FILE_TYPES + ['.chain']
 
 
 def new_tree_file_name(alignment):
@@ -377,23 +378,24 @@ def move_output_files(output_dir, tree_dir, alignment, save_run):
     if not os.path.exists(analyses_dir):
         os.makedirs(analyses_dir)
 
-    if save_run:
-        if not os.path.exists(tree_dir):
-            os.makedirs(tree_dir)
+    if not os.path.exists(tree_dir):
+        os.makedirs(tree_dir)
 
-        # Move chain files into output/analyses/[alignment]: .chain, .monitor, .param, .run, .trace, .treelist
-        for file_type in CHAIN_FILE_TYPES:
-            for file in os.listdir('.'):
-                if file.endswith(file_type):
-                    current_path = os.path.join('.', file)
-                    new_path = os.path.join(analyses_dir, file)
-                    os.rename(current_path, new_path)
-    else:
-        # delete all run files
-        for file_type in CHAIN_FILE_TYPES:
-            for file in os.listdir('.'):
-                if file.endswith(file_type):
-                    os.remove(file)
+    # Move chain files into output/analyses/[alignment]: .chain (maybe), .monitor, .param, .run, .trace, .treelist
+    # note that .chain files should only be kept if the save_run flag is True
+    keep_file_types = ALL_CHAIN_FILE_TYPES if save_run else KEEP_CHAIN_FILE_TYPES
+    for file_type in keep_file_types:
+        for file in os.listdir('.'):
+            if file.endswith(file_type):
+                current_path = os.path.join('.', file)
+                new_path = os.path.join(analyses_dir, file)
+                os.rename(current_path, new_path)
+
+    # delete all remaining run files
+    for file_type in ALL_CHAIN_FILE_TYPES:
+        for file in os.listdir('.'):
+            if file.endswith(file_type):
+                os.remove(file)
 
     # Move and rename output tree file
     os.rename(TREE_FILE_NAME, os.path.join(tree_dir, new_tree_file_name(alignment)))
