@@ -12,7 +12,6 @@ import re
 import os
 import csv
 from pkg_resources import Requirement, resource_filename
-from config import config_types
 
 
 # ==================================== GLOBAL VARIABLES ====================================
@@ -468,12 +467,7 @@ def apply_decorators(*decorators):
     return dec
 
 
-@click.group()
-def cli():
-    pass
-
-
-@cli.command()
+@click.command()
 @click.option('--threads', type=int, default=N_THREADS,
               help='How many threads the process should run on. Default: %d.' % N_THREADS)
 @click.option('--max-gen', type=int, default=MAX_GEN,
@@ -495,7 +489,7 @@ def cli():
                    + 'If disabled, .chain files are only saved for bad trees.')
 @click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
-def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree_chains, **thresholds):
+def main(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree_chains, **thresholds):
     """
     ALIGNMENTS: the paths to the alignment files to process. The alignments will be processed sequentially, and not in
     parallel. To process in parallel, run several instances of this command, adjusting the number of threads
@@ -608,30 +602,3 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
                 raise
 
             print('All alignment chains finished.')
-
-
-# Create the list of option decorators for the [config] command: one for each configuration variable.
-config_cmd_decorators = []
-for category, variables in config_data.items():
-    for variable, value in variables.items():
-        full_variable_name = '%s-of-%s' % (variable, category)
-        current_value = config_data[category][variable]
-        decorator = click.option(
-            '--%s' % full_variable_name,
-            type=config_types[category][variable],
-            default=None,
-            help='Set the configuration variable %s. Current value: %s.' % (full_variable_name, current_value)
-        )
-        config_cmd_decorators.append(decorator)
-
-
-@cli.command()
-@apply_decorators(*config_cmd_decorators)
-def config(**config_variables):
-    for var, val in config_variables.items():
-        if val is not None:
-            name, cat = var.split('_of_')
-            config_data[cat][name] = val
-
-    with open(CONFIG_FILE, 'w') as configfile:
-        config_data.write(configfile)
