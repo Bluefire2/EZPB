@@ -1,3 +1,5 @@
+import warnings
+
 import click
 import multiprocessing
 import subprocess
@@ -397,8 +399,12 @@ def move_output_files(output_dir, tree_dir, alignment, save_run):
             if file.endswith(file_type):
                 os.remove(file)
 
-    # Move and rename output tree file
-    os.rename(TREE_FILE_NAME, os.path.join(tree_dir, new_tree_file_name(alignment)))
+    # Move and rename output tree file if it has been created
+    try:
+        os.rename(TREE_FILE_NAME, os.path.join(tree_dir, new_tree_file_name(alignment)))
+    except FileNotFoundError:
+        warnings.warn("The chains have not been running long enough for a tree file to have been generated",
+                      UserWarning)
 
 
 def check_fail_callback(convergence, alignment, chains, processes, output_dir, save_good_tree_runs):
