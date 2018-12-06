@@ -63,7 +63,7 @@ OUTPUT_DIRECTORY = config_data['output']['directory']
 
 
 # Output file data
-# These are the chain file types that the [run] command will move to the [analyses] directory when a chain has been
+# These are the chain file types that the [run] command will move to the [analyses] directory when a run has been
 # terminated
 KEEP_CHAIN_FILE_TYPES = ['.monitor', '.param', '.run', '.trace', '.treelist']
 ALL_CHAIN_FILE_TYPES = KEEP_CHAIN_FILE_TYPES + ['.chain']
@@ -361,7 +361,7 @@ def terminate_all_processes(processes):
         process.terminate()
 
 
-def move_output_files(output_dir, tree_dir, alignment, save_run):
+def move_output_files(output_dir, tree_dir, alignment, save_chain_files):
     """
     After the chains have finished running, move the chain output files and the generated tree file to their places in
     the output directory.
@@ -369,7 +369,8 @@ def move_output_files(output_dir, tree_dir, alignment, save_run):
     :param output_dir: The path to the output directory.
     :param tree_dir: The directory to move the tree file to.
     :param alignment: The name of the alignment.
-    :param save_run: True if the output chain files from this run are to be kept, False if they are to be deleted.
+    :param save_chain_files: True if the output chain files from this run are to be kept, False if they are to be
+    deleted.
 
     Preconditions:
         - the [run] command must have been executed prior to calling this function.
@@ -385,7 +386,7 @@ def move_output_files(output_dir, tree_dir, alignment, save_run):
 
     # Move chain files into output/analyses/[alignment]: .chain (maybe), .monitor, .param, .run, .trace, .treelist
     # note that .chain files should only be kept if the save_run flag is True
-    keep_file_types = ALL_CHAIN_FILE_TYPES if save_run else KEEP_CHAIN_FILE_TYPES
+    keep_file_types = ALL_CHAIN_FILE_TYPES if save_chain_files else KEEP_CHAIN_FILE_TYPES
     for file_type in keep_file_types:
         for file in os.listdir('.'):
             if file.endswith(file_type):
@@ -407,7 +408,7 @@ def move_output_files(output_dir, tree_dir, alignment, save_run):
                       UserWarning)
 
 
-def check_fail_callback(convergence, alignment, chains, processes, output_dir, save_good_tree_runs):
+def check_fail_callback(convergence, alignment, chains, processes, output_dir, save_good_tree_chains):
     """
     This is the function that is called when the threshold check fails. All but the first arguments are intended to be
     bound to the function using [functools.partial] to create a callback that fits the specification outlined in
@@ -418,7 +419,7 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir, s
     :param chains: A list of the names of the chains being run.
     :param processes: A list of the [mpirun] processes running the chains.
     :param output_dir: The output directory (where the output files are being moved to).
-    :param save_good_tree_runs: True if output chain files from good trees are to be kept, False if they are to be
+    :param save_good_tree_chains: True if output chain files from good trees are to be kept, False if they are to be
     deleted.
     """
     # Stop all chain runs
@@ -437,21 +438,21 @@ def check_fail_callback(convergence, alignment, chains, processes, output_dir, s
 
     # If the chains converged, move the output tree file to good_trees, otherwise move it to bad_trees
     # Also, rename it to [alignment].tre
-    save_run = True
+    save_chain_files = True
     if convergence.converged:
         # do we save the runs?
-        if not save_good_tree_runs:
-            save_run = False
+        if not save_good_tree_chains:
+            save_chain_files = False
         tree_dir = os.path.join(output_dir, 'good_trees')
     else:
-        save_run = True
+        save_chain_files = True
         tree_dir = os.path.join(output_dir, 'bad_trees')
 
     move_output_files(
         output_dir=output_dir,
         tree_dir=tree_dir,
         alignment=alignment,
-        save_run=save_run)
+        save_chain_files=save_chain_files)
 
 
 def apply_decorators(*decorators):
@@ -489,11 +490,12 @@ def cli():
               help='How many generations to ignore before checking for convergence. Default: %d.' % MIN_CYCLES)
 @click.option('--out', type=str, default=OUTPUT_DIRECTORY,
               help='The directory to store the output files in. Default: %s.' % OUTPUT_DIRECTORY)
-@click.option('--save-good-tree-runs', is_flag=True,
-              help='Save the run files for good trees as well as bad trees. If disabled, only bad tree runs are saved.')
+@click.option('--save-good-tree-chains', is_flag=True,
+              help='Save the .chain files for good trees as well as bad trees. '
+                   + 'If disabled, .chain files are only saved for bad trees.')
 @click.argument('alignments', type=click.Path(exists=True), required=True, nargs=-1)
 @click.argument('chains', type=int, required=True)
-def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree_runs, **thresholds):
+def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree_chains, **thresholds):
     """
     ALIGNMENTS: the paths to the alignment files to process. The alignments will be processed sequentially, and not in
     parallel. To process in parallel, run several instances of this command, adjusting the number of threads
@@ -574,7 +576,7 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
                                    chains=chain_names,
                                    processes=processes,
                                    output_dir=out,
-                                   save_good_tree_runs=save_good_tree_runs)
+                                   save_good_tree_chains=save_good_tree_chains)
 
                 # This event loop blocks execution until it's done, thus preventing the next alignment from being
                 # processed until this one is done:
@@ -602,7 +604,7 @@ def run(threads, alignments, chains, check_freq, min_cycles, out, save_good_tree
                     output_dir=out,
                     tree_dir=tree_dir,
                     alignment=alignment,
-                    save_run=True)
+                    save_chain_files=True)
                 raise
 
             print('All alignment chains finished.')
