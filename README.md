@@ -29,7 +29,7 @@ Briefly, EZ-PB executes the following tasks sequentially on each alignment in a 
 
 Step 4 is not strictly necessary, but it allows you to use the command line interface in any directory, not just the one that the code is in.
 
-## Command line interface
+## Usage
 
 There is a single basic command for EZ-PB:
 
@@ -43,7 +43,7 @@ CHAINS: the number of the chains to run in parallel. Allocated threads will be s
 
 OPTIONS: the options allow the user to temporarily set variables such as convergence thresholds and the output directory. Alternatively, these can be permanently set in the config file. For a detailed list of options and what they do, run `ezpb --help`.
 
-##### Example
+#### Example
 
 If you would like to run PhyloBayes on all alingments in your current directory and use two chain per run, type:
 
@@ -55,31 +55,6 @@ If you would like to run it on a specific folder, type:
 
 `ezpb parth/to/folder 2`
 
-## run
-This command runs a set of chains on one or more alignments.
-
-##### Usage
-`phylomatic run [OPTIONS] ALIGNMENTS... CHAINS`
-
-
-
-ALIGNMENTS: the paths to the alignment files to process. The alignments will be processed sequentially, and not in parallel. To process in parallel, run several instances of this command, adjusting the number of threads accordingly.
-
-Alternatively, any path can be to a directory. In that case, all files of an alignment file type in the directory will be processed sequentially. The file types that the command accepts can be set in the configuration settings.
-
-CHAINS: the number of the chains to run in parallel. Allocated threads will be shared evenly among the chains. The number of chains must be at least two, but cannot be greater than the number of threads allocated.
-
-OPTIONS: the options allow the user to temporarily set variables such as convergence thresholds and the output directory. Alternatively, these can be permanently set with the `config` command. For a detailed list of options and what they do, run `phylomatic run --help`.
 
 ##### Output
-The default output directory is `phylomatic`. `phylomatic/analyses` will contain a directory for each alignment file, each in turn containing its generated chain files. `phylomatic/good_trees` will contain trees that converged, and `phylomatic/bad_trees` will contain trees that did not (i.e. trees whose chains exceeded the maximum number of generations without converging). Performing a keyboard interrupt (`Ctrl + C`) at any time will stop all currently running chains, and place the currently generated tree in `phylomatic/incomplete_trees`.
-
-## config
-This command permanently sets one or more configuration variables.
-
-Alternatively configuration variables can be changed manually by editing `config.ini`.
-
-##### Usage
-`phylomatic config [OPTIONS]`
-
-OPTIONS: use these to set a configuration variable, assigning its new value to the option. For a detailed list of options, run `phylomatic config --help`.
+The default output directory is `ezpb`. `ezpb/analyses` will contain a directory for each alignment file, each in turn containing its generated chain files. `ezpb/good_trees` will contain trees that converged, and `ezpb/bad_trees` will contain trees that did not (i.e. trees whose chains exceeded the maximum number of generations without converging). Performing a keyboard interrupt (`Ctrl + C`) at any time will stop all currently running chains, and place the currently generated tree in `ezpb/incomplete_trees`.
