@@ -53,7 +53,7 @@ This invokes 2 chains.
 
 If you would like to run it on a specific folder, type:
 
-`ezpb parth/to/folder 2`
+`ezpb path/to/folder 2`
 
 
 ##### Output
