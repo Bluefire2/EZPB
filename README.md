@@ -8,13 +8,13 @@ EZ-PB facilitates the calculation of individual gene trees with the Bayesian pac
 
 EZ-PB is an easy-to-use Python wrapper around the PhyloBayes package. As such, EZ-PB does not reconstruct phylogenies itself, but executes the parallel version of [PhyloBayes](https://github.com/bayesiancook/pbmpi) and its diagnostic tools according to specified parameters. Therefore, anyone using EZ-PB must primarily cite the [PhyloBayes authors research](http://www.atgc-montpellier.fr/phylobayes/paper.php). Briefly, EZ-PB executes the following tasks sequentially on each alignment in a set folder: 
   
-      (1) Execute a desired number of chains.
+1. Execute a desired number of chains.
       
-      (2) Automatically check for sufficient sampling and convergence between chains. Convergence criteria are based on the log likelihood effective size, the relative difference in log likelihood, and the maximum difference. Once all of the criteria are satisfied, EZ-PB stops the chains. If chains exceed a certain specified length (the maximum number of generations) without converging, EZ-PB terminates them, in order to prevent any set of chains from running overly too long. All thresholds can be configured.
+2. Automatically check for sufficient sampling and convergence between chains. Convergence criteria are based on the log likelihood effective size, the relative difference in log likelihood, and the maximum difference. Once all of the criteria are satisfied, EZ-PB stops the chains. If chains exceed a certain specified length (the maximum number of generations) without converging, EZ-PB terminates them, in order to prevent any set of chains from running overly too long. All thresholds can be configured.
             
-      (3) Name and organize ‘good’ and ‘bad’ consensus trees and associated analyses files, based upon convergence criteria of the respective chains. Once the above mentioned tasks are completed for a given alignment, the next alignment chains start running.
+3. Name and organize ‘good’ and ‘bad’ consensus trees and associated analyses files, based upon convergence criteria of the respective chains. Once the above mentioned tasks are completed for a given alignment, the next alignment chains start running.
       
-      (4) Summarize the results in a spreadsheet.
+4. Summarize the results in a spreadsheet.
 
 ## Installation
 
