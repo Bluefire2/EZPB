@@ -37,17 +37,23 @@ There is a single basic command for EZ-PB:
 
 ALIGNMENTS: the paths to the alignment files to use. The alignments will be processed sequentially and not in parallel. To process in parallel, run several instances of this command, adjusting the number of threads accordingly (not recommended).
 
-Alternatively, you can provide any path to a directory. In that case, all files of an alignment file type in that directory will be processed sequentially. PhyloBayes accepts .phylip and .nexus files. EZ-PB is by default set up to use to files ending with .
+Alternatively, you can provide any path to a directory. In that case, all alignments in that directory will be processed sequentially. PhyloBayes accepts .phylip and .nexus files. EZ-PB is by default set up to use to files ending with .phy, .phylip, or .phylip-relaxed, but .nexus files can also be designated through the config file.
 
 CHAINS: the number of the chains to run in parallel. Allocated threads will be shared evenly among the chains. The number of chains must be at least two, but cannot be greater than the number of threads allocated.
 
-OPTIONS: the options allow the user to temporarily set variables such as convergence thresholds and the output directory. Alternatively, these can be permanently set with the `config` command. For a detailed list of options and what they do, run `phylomatic run --help`.
+OPTIONS: the options allow the user to temporarily set variables such as convergence thresholds and the output directory. Alternatively, these can be permanently set in the config file. For a detailed list of options and what they do, run `ezpb --help`.
 
-Therefore, if you would like to run it on all alingments in your current directory and use two chain per run, type:
+##### Example
+
+If you would like to run PhyloBayes on all alingments in your current directory and use two chain per run, type:
 
 `ezpb . 2`
 
 This invokes 2 chains.
+
+If you would like to run it on a specific folder, type:
+
+`ezpb parth/to/folder 2`
 
 ## run
 This command runs a set of chains on one or more alignments.
