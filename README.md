@@ -1,9 +1,9 @@
-# Phyl-o-matic
+# EZ-PB
 --add high-level description here--
 
 This package allows you to run multiple chains on a series of alignment files, sequentially. What this means is that the alignment files are queued up, and as soon as one has finished processing, the next alignment chains start running.
 
-Of course, technically no chain is ever "finished": if left alone, it will run forever. This is the core of Phyl-o-matic: it automatically detects if and when a set of chains converges and stops them, starting the next set.
+Of course, technically no chain is ever "finished": if left alone, it will run forever. This is an important feature of EZ-PB: it automatically detects if and when a set of chains converges and stops them, starting the next set.
 
 Convergence criteria are based on the log likelihood effective size, the relative difference in log likelihood, and the maximum difference. Once all of the criteria are satisfied, Phyl-o-matic stops the chains. If the chains get to a certain length (the maximum number of generations) without converging, Phyl-o-matic also stops them, in order to prevent any set of chains from running for too long. All of these thresholds can be configured.
 
@@ -14,8 +14,9 @@ Convergence criteria are based on the log likelihood effective size, the relativ
 3. `cd` into the root directory of the code and run `pip install -e .`.
 4. Add the directory to your PATH environment variable. This can be done by adding the following line to your `.bashrc` file: `export PATH="/home/path/to/the/directory:$PATH"
 `.
+5. Download and compile the current version of [PhyloBayes-MPI](https://github.com/bayesiancook/pbmpi) for your system. After compiling, add the exectuable bpcomp, tracecomp, and pb_mpi into the EZ-PB folder.
 
-The last step is not strictly necessary, but it allows you to use the command line interface in any directory, not just the one that the code is in.
+Step 4 is not strictly necessary, but it allows you to use the command line interface in any directory, not just the one that the code is in.
 
 ## Command line interface
 There are two base commands: run and config.
