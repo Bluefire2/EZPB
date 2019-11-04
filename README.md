@@ -2,9 +2,9 @@
 
 Gene tree summary methods are increasingly used to study difficult phylogenetic questions, particularly those that may involve incomplete lineage sorting. Popular programs, such as [ASTRAL](https://github.com/smirarab/ASTRAL) or [ASTRID](https://github.com/pranjalv123/ASTRID), efficiently summarize large numbers of individual gene trees into species trees under the multispecies coalescent model. 
 
-The used input gene trees for are most conveniently calculated with ML methods, such as [RAxML](https://github.com/stamatak/standard-RAxML) or [IQ-Tree](https://github.com/Cibiv/IQ-TREE). However, there is reason to believe that gene trees obtained from Bayesian Inference are favourable, but they are more challenging to compute.
+Input gene trees are most conveniently calculated with ML methods, such as [RAxML](https://github.com/stamatak/standard-RAxML) or [IQ-Tree](https://github.com/Cibiv/IQ-TREE). However, there is reason to believe that gene trees obtained from Bayesian Inference are favourable, but they are more challenging to compute.
 
-EZ-PB facilitates the calculation of individual gene trees with the Bayesian package [PhyloBayes](https://github.com/bayesiancook/phylobayes), and its great mixture models. Background on PhyloBayes and its great mixture models can be found on the [developers's website](http://www.atgc-montpellier.fr/phylobayes/) and the [Bayesian Kitchen Blog](http://bayesiancook.blogspot.com/).
+EZ-PB facilitates the calculation of individual gene trees with the Bayesian package [PhyloBayes](https://github.com/bayesiancook/phylobayes), and its great mixture models. Background on PhyloBayes and its models can be found on the [developers's website](http://www.atgc-montpellier.fr/phylobayes/) and the [Bayesian Kitchen Blog](http://bayesiancook.blogspot.com/).
 
 EZ-PB is an easy-to-use Python wrapper around the PhyloBayes package. As such, EZ-PB does not reconstruct phylogenies itself, but executes the parallel version of [PhyloBayes](https://github.com/bayesiancook/pbmpi) and its diagnostic tools according to specified parameters. Therefore, anyone using EZ-PB must primarily cite the [PhyloBayes authors research](http://www.atgc-montpellier.fr/phylobayes/paper.php). Briefly, EZ-PB executes the following tasks sequentially on each alignment in a set folder: 
   
