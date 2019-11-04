@@ -6,7 +6,9 @@ Input gene trees are most conveniently calculated with ML methods, such as [RAxM
 
 EZ-PB facilitates the calculation of individual gene trees with the Bayesian package [PhyloBayes](https://github.com/bayesiancook/phylobayes), and its great mixture models. Background on PhyloBayes and its models can be found on the [developers's website](http://www.atgc-montpellier.fr/phylobayes/) and the [Bayesian Kitchen Blog](http://bayesiancook.blogspot.com/).
 
-EZ-PB is an easy-to-use Python wrapper around the PhyloBayes package. As such, EZ-PB does not reconstruct phylogenies itself, but executes the parallel version of [PhyloBayes](https://github.com/bayesiancook/pbmpi) and its diagnostic tools according to specified parameters. Therefore, anyone using EZ-PB must primarily cite the [PhyloBayes authors' research](http://www.atgc-montpellier.fr/phylobayes/paper.php). Briefly, EZ-PB executes the following tasks sequentially on each alignment in a set folder: 
+EZ-PB is an easy-to-use Python wrapper around the PhyloBayes package. As such, EZ-PB does not reconstruct phylogenies itself, but executes the parallel version of [PhyloBayes](https://github.com/bayesiancook/pbmpi) and its diagnostic tools according to specified parameters. Therefore, anyone using EZ-PB must primarily cite the [PhyloBayes authors' research](http://www.atgc-montpellier.fr/phylobayes/paper.php). 
+
+Briefly, EZ-PB executes the following tasks sequentially on each alignment in a set folder: 
   
 1. Execute a desired number of chains.
       
