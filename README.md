@@ -12,7 +12,7 @@ EZ-PB is an easy-to-use Python wrapper around the PhyloBayes package. As such, E
             
       (3) Name and organize ‘good’ and ‘bad’ consensus trees and associated analyses files, based upon convergence criteria of the respective chains. Once the above mentioned tasks are completed for a given alignment, the next alignment chains start running.
       
-       (4) Summarize the results in a spreadsheet.
+      (4) Summarize the results in a spreadsheet.
 
 ## Installation
 
