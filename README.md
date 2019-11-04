@@ -12,7 +12,7 @@ Briefly, EZ-PB executes the following tasks sequentially on each alignment in a 
   
 1. Execute a desired number of chains.
       
-2. Automatically check for sufficient sampling and convergence between chains. Convergence criteria are based on the log likelihood effective size, the relative difference in log likelihood, and the maximum difference. Once all of the criteria are satisfied, EZ-PB stops the chains. If chains exceed a certain specified length (the maximum number of generations) without converging, EZ-PB terminates them, in order to prevent any set of chains from running overly too long. All thresholds can be configured.
+2. Automatically check for sufficient sampling and convergence between chains. Convergence criteria are based on the log likelihood effective size, the relative difference in log likelihood, and the maximum difference. Once all of the criteria are satisfied, EZ-PB stops the chains and generates a consensus tree (with bcomp). If chains exceed a certain specified length (the maximum number of generations) without converging, EZ-PB terminates them, in order to prevent any set of chains from running overly too long. All thresholds can be configured.
             
 3. Name and organize ‘good’ and ‘bad’ consensus trees and associated analyses files, based upon convergence criteria of the respective chains. Once the above mentioned tasks are completed for a given alignment, the next alignment chains start running.
       
