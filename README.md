@@ -1,11 +1,18 @@
 # EZ-PB
---add high-level description here--
 
-This package allows you to run multiple chains on a series of alignment files, sequentially. What this means is that the alignment files are queued up, and as soon as one has finished processing, the next alignment chains start running.
+Gene tree summary methods are increasingly used to study difficult phylogenetic questions that may be caused by incomplete lineage sorting. Popular programs, such as [ASTRAL](https://github.com/smirarab/ASTRAL) or [ASTRID](https://github.com/pranjalv123/ASTRID), can efficiently summarize large number of individual gene trees to species phylogenies. The used gene trees are most conveniently calculated with ML methods, such as [RAxML](https://github.com/stamatak/standard-RAxML) or [IQ-Tree](https://github.com/Cibiv/IQ-TREE). However, there is reason to believe that gene trees obtained from Bayesian Inference are favourable, but they are more challenging to compute.
 
-Of course, technically no chain is ever "finished": if left alone, it will run forever. This is an important feature of EZ-PB: it automatically detects if and when a set of chains converges and stops them, starting the next set.
+EZ-PB facilitates the calculation of individual gene trees with the Bayesian package [PhyloBayes](https://github.com/bayesiancook/phylobayes), and its great mixture models. Background on PhyloBayes and its great mixture models can be found on the [developers's website](http://www.atgc-montpellier.fr/phylobayes/) and the [Bayesian Kitchen Blog](http://bayesiancook.blogspot.com/).
 
-Convergence criteria are based on the log likelihood effective size, the relative difference in log likelihood, and the maximum difference. Once all of the criteria are satisfied, Phyl-o-matic stops the chains. If the chains get to a certain length (the maximum number of generations) without converging, Phyl-o-matic also stops them, in order to prevent any set of chains from running for too long. All of these thresholds can be configured.
+EZ-PB is an easy-to-use Python wrapper around the PhyloBayes package. As such, EZ-PB does not reconstruct phylogenies itself, but executes the parallel version of [PhyloBayes](https://github.com/bayesiancook/pbmpi) and its diagnostic tools according to specified parameters. Therefore, anyone using EZ-PB must primarily cite the [PhyloBayes authors research](http://www.atgc-montpellier.fr/phylobayes/paper.php). Briefly, EZ-PB executes the following tasks sequentially on each alignment in a set folder: 
+  
+      (1) Execute a desired number of chains.
+      
+      (2) Automatically check for sufficient sampling and convergence between chains. Convergence criteria are based on the log likelihood effective size, the relative difference in log likelihood, and the maximum difference. Once all of the criteria are satisfied, EZ-PB stops the chains. If chains exceed a certain specified length (the maximum number of generations) without converging, EZ-PB terminates them, in order to prevent any set of chains from running overly too long. All thresholds can be configured.
+            
+      (3) Name and organize ‘good’ and ‘bad’ consensus trees and associated analyses files, based upon convergence criteria of the respective chains. Once the above mentioned tasks are completed for a given alignment, the next alignment chains start running.
+      
+       (4) Summarize the results in a spreadsheet.
 
 ## Installation
 
