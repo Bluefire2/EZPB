@@ -58,3 +58,7 @@ If you would like to run it on a specific folder, type:
 
 ##### Output
 The default output directory is `ezpb`. `ezpb/analyses` will contain a directory for each alignment file, each in turn containing its generated chain files. `ezpb/good_trees` will contain trees that converged, and `ezpb/bad_trees` will contain trees that did not (i.e. trees whose chains exceeded the maximum number of generations without converging). Performing a keyboard interrupt (`Ctrl + C`) at any time will stop all currently running chains, and place the currently generated tree in `ezpb/incomplete_trees`.
+
+##### Options
+If you run EZ-PB on a large number of alignments, the sum of the chain and parameter files will get huge and may clog up your hard drive pretty fast. To overcome this, EZ-PB does by default not save the chain and parameter files of runs that fulfilled the convergence criteria (= the 'good' trees). It only saves the associated files of the 'bad' trees. However, if you would like to keep the chain and parameter files of the good trees as well, simply add the `--save-good-tree-chains` when you start a run: `ezpb . 2 --save-good-tree-chains`.
+
