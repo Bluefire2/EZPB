@@ -22,7 +22,7 @@ Briefly, EZ-PB executes the following tasks sequentially on each alignment in a 
 
 1. Make sure that you have Python 3.6+ installed on your machine. If you have multiple versions, you can [create a virtual environment](https://conda.io/docs/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) with the correct version. If you are using conda, you could do `conda create -n ezpb python=3.6`. Once the new environment is set up, activate it with `source activate ezpb`.
 2. Clone the repository using `git`: `git clone https://github.com/Bluefire2/EZPB.git`
-3. Download the current version of [PhyloBayes-MPI](https://github.com/bayesiancook/pbmpi) for your system. You need to copy the exectuables `bpcomp`, `tracecomp`, and `pb_mpi` into the EZPB folder. You may have to compile these for your system.
+3. Download the current version of [PhyloBayes-MPI](https://github.com/bayesiancook/pbmpi) for your system. You need to copy the exectuables `bpcomp`, `tracecomp`, and `pb_mpi` into the EZPB folder. You may have to compile these for your system. Also, make sure that the files are executable (i.e., chmod +x).
 4. `cd` into the EZPB root directory and run `pip install -e .`.
 5. Add the directory to your PATH environment variable. This can be done by adding the following line to your `.bashrc` file: `export PATH="/home/path/to/the/directory:$PATH"`.
 
