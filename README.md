@@ -20,7 +20,7 @@ Briefly, EZ-PB executes the following tasks sequentially on each alignment in a 
 
 ## Installation
 
-1. Make sure that you have Python 3.6+ installed on your machine. If you have multiple versions, you can [create a virtual environment](https://conda.io/docs/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) with the correct version.
+1. Make sure that you have Python 3.6+ installed on your machine. If you have multiple versions, you can [create a virtual environment](https://conda.io/docs/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) with the correct version. If you are using conda, you could do `conda create -n ezpb python=3.6`. Once the new environment is set up, activate with `source activate ezpb`.
 2. Clone the repository using `git`: `git clone https://github.com/Bluefire2/EZPB.git`
 3. `cd` into the root directory of the code and run `pip install -e .`.
 4. Add the directory to your PATH environment variable. This can be done by adding the following line to your `.bashrc` file: `export PATH="/home/path/to/the/directory:$PATH"
