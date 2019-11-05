@@ -18,7 +18,7 @@ devnull = open(os.devnull, 'w')  # so we can suppress the output of subprocesses
 
 
 # Get the configuration variables from the config.ini file
-CONFIG_FILE = resource_filename(Requirement.parse("phyl-o-matic"), "config.ini")
+CONFIG_FILE = resource_filename(Requirement.parse("ezpb"), "config.ini")
 config_data = configparser.ConfigParser()
 config_data.read(CONFIG_FILE)
 
