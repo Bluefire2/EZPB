@@ -1,18 +1,17 @@
+import asyncio
+import configparser
+import csv
+import multiprocessing
+import os
+import re
+import shlex
+import subprocess
+import sys
 import warnings
+from functools import reduce, partial
 
 import click
-import multiprocessing
-import subprocess
-import asyncio
-import shlex
-import sys
-from functools import reduce, partial
-import configparser
-import re
-import os
-import csv
 from pkg_resources import Requirement, resource_filename
-
 
 # ==================================== GLOBAL VARIABLES ====================================
 devnull = open(os.devnull, 'w')  # so we can suppress the output of subprocesses
