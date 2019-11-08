@@ -2,6 +2,7 @@ import asyncio
 import configparser
 import csv
 import multiprocessing
+import ntpath
 import os
 import re
 import shlex
@@ -358,8 +359,20 @@ def terminate_all_processes(processes):
     for process in processes:
         process.terminate()
 
+def file_directory(file):
+    """
+    Get the parent directory of a given file. For example, the parent directory of "path/to/file.txt" is "path/to".
 
-def move_output_files(output_dir, tree_dir, alignment, save_chain_files):
+    :param file: The path to the file.
+    """
+    return os.path.dirname(os.path.realpath(file))
+
+
+def alignment_name(path):
+    return "--".join(path.split(os.path.sep)[1:])
+
+
+def move_output_files(output_dir, tree_dir, alignment, save_chain_files, root_dir="."):
     """
     After the chains have finished running, move the chain output files and the generated tree file to their places in
     the output directory.
@@ -369,6 +382,7 @@ def move_output_files(output_dir, tree_dir, alignment, save_chain_files):
     :param alignment: The name of the alignment.
     :param save_chain_files: True if the output chain files from this run are to be kept, False if they are to be
     deleted.
+    :param root_dir: The root directory of the alignment file. Defaults to the current directory.
 
     Preconditions:
         - the [run] command must have been executed prior to calling this function.
@@ -385,8 +399,9 @@ def move_output_files(output_dir, tree_dir, alignment, save_chain_files):
     # Move chain files into output/analyses/[alignment]: .chain (maybe), .monitor, .param, .run, .trace, .treelist
     # note that .chain files should only be kept if the save_run flag is True
     keep_file_types = ALL_CHAIN_FILE_TYPES if save_chain_files else KEEP_CHAIN_FILE_TYPES
+    candidate_files = os.listdir('.')
     for file_type in keep_file_types:
-        for file in os.listdir('.'):
+        for file in candidate_files:
             if file.endswith(file_type):
                 current_path = os.path.join('.', file)
                 new_path = os.path.join(analyses_dir, file)
@@ -533,7 +548,12 @@ def main(threads, alignments, chains, check_freq, min_cycles, out, save_good_tre
                             alignment_files.append(os.path.join(path, file))
 
         # sequentially process each alignment
-        for alignment in alignment_files:
+        for alignment_file in alignment_files:
+            # The name of the alignment
+            name = alignment_name(alignment_file)
+            # The directory that the alignment file is in
+            root_dir = file_directory(alignment_file)
+
             # first, check to see if it's already been done
             # we can do this by checking the logfile
             skip_alignment = False
@@ -541,31 +561,31 @@ def main(threads, alignments, chains, check_freq, min_cycles, out, save_good_tre
                 with open(os.path.join(out, LOGFILE)) as csv_fp:
                     reader = csv.DictReader(csv_fp)
                     for row in reader:
-                        if alignment == row['alignment']:
+                        if name == row['alignment']:
                             # the alignment is in the logfile, therefore it has already been run
                             skip_alignment = True
 
             if skip_alignment:
-                click.echo('Skipping alignment %s.' % alignment)
+                click.echo('Skipping alignment %s.' % name)
                 continue
 
             processes = []
             threads_per_chain = threads / chains
 
             # generate specific chain file names
-            chain_full_names = [chain_full_name(alignment, chain_name)
+            chain_full_names = [chain_full_name(name, chain_name)
                                 for chain_name in chain_names]
 
             try:
                 for chain_name in chain_full_names:
-                    cmd = mpirun_cmd(threads_per_chain, alignment, chain_name)
+                    cmd = mpirun_cmd(threads_per_chain, alignment_file, chain_name)
                     click.echo('Starting run: %s' % ' '.join(cmd))
                     # open it and start running
                     process = subprocess.Popen(cmd)
                     processes.append(process)
 
                 callback = partial(check_fail_callback,
-                                   alignment=alignment,
+                                   alignment=name,
                                    chains=chain_names,
                                    processes=processes,
                                    output_dir=out,
@@ -575,7 +595,7 @@ def main(threads, alignments, chains, check_freq, min_cycles, out, save_good_tre
                 # processed until this one is done:
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(check_thresholds_periodic(
-                    alignment, chain_names, callback, check_freq, min_cycles, **thresholds))
+                    name, chain_names, callback, check_freq, min_cycles, **thresholds))
 
                 print('Alignment %s chains finished processing.' % alignment)
             except BaseException:  # so that it catches KeyboardInterrupts
@@ -596,8 +616,11 @@ def main(threads, alignments, chains, check_freq, min_cycles, out, save_good_tre
                 move_output_files(
                     output_dir=out,
                     tree_dir=tree_dir,
-                    alignment=alignment,
-                    save_chain_files=True)
+                    alignment=name,
+                    save_chain_files=True,
+                    root_dir=root_dir)
                 raise
+            finally:
+                terminate_all_processes(processes)
 
             print('All alignment chains finished.')
