@@ -530,7 +530,7 @@ def main(threads, alignments, chains, check_freq, min_cycles, out, save_good_tre
                 for file in os.listdir(path):
                     for file_type in INPUT_FILE_TYPES:
                         if file.endswith(file_type):
-                            alignment_files.append(file)
+                            alignment_files.append(os.path.join(path, file))
 
         # sequentially process each alignment
         for alignment in alignment_files:
